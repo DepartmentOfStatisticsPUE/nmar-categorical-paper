@@ -1754,38 +1754,58 @@ summary {
 <!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Simulation study 2 – non-parametric model for multinomial case</p>
+<div id="simulation-study-2-non-parametric-model-for-multinomial-case" class="section level1">
+<h1>Simulation study 2 – non-parametric model for multinomial case</h1>
 <p>x1=1, x2=1, y1, y2, y3 - 0.6, 0.3, 0.1 x1=1, x2=2, y1, y2, y3 - 0.3, 0.4, 0.3 x1=2, x2=1, y1, y2, y3 - 0.1, 0.3, 0.6 x1=2, x2=2, y1, y2, y3 - 0.2, 0.4, 0.4</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZSh0YWJsZShkZiR5KSlcblxuYGBgIn0= -->
-<pre class="r"><code>prop.table(table(df$y))
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0LnNlZWQoMTIzKVxucmVwX3ggPC0gYXMuaW50ZWdlcig1MDAqYyg1MCwgMTAwLCAxNTAsIDIwMCkpXG5kZiA8LSBkYXRhLmZyYW1lKHggPSByZXAoYygxMSwxMiwgMjEsIDIyKSwgcmVwX3gpKVxuZGYkeDEgPC0gaWZlbHNlKHN1YnN0cihkZiR4LDEsMSkgPT0gMSwgIDEsIDIpXG5kZiR4MiA8LSBpZmVsc2Uoc3Vic3RyKGRmJHgsMiwyKSA9PSAxLCAgMSwgMilcbmRmJHkgPC0gTkFcbmRmJHkgPC0gaWZlbHNlKGRmJHggPT0gMTEsIHNhbXBsZSh4ID0gYygxLDIsMyksIHNpemUgPSByZXBfeFsxXSwgcHJvYiA9IGMoMC42ICwwLjMsIDAuMSksIHJlcGxhY2UgPSBUKSwgZGYkeSlcbmRmJHkgPC0gaWZlbHNlKGRmJHggPT0gMTIsIHNhbXBsZSh4ID0gYygxLDIsMyksIHNpemUgPSByZXBfeFsyXSwgcHJvYiA9IGMoMC4zLCAwLjQsIDAuMyksIHJlcGxhY2UgPSBUKSwgZGYkeSlcbmRmJHkgPC0gaWZlbHNlKGRmJHggPT0gMjEsIHNhbXBsZSh4ID0gYygxLDIsMyksIHNpemUgPSByZXBfeFszXSwgcHJvYiA9IGMoMC4xLCAwLjMsIDAuNiksIHJlcGxhY2UgPSBUKSwgZGYkeSlcbmRmJHkgPC0gaWZlbHNlKGRmJHggPT0gMjIsIHNhbXBsZSh4ID0gYygxLDIsMyksIHNpemUgPSByZXBfeFs0XSwgcHJvYiA9IGMoMC4yLCAwLjQsIDAuNCksIHJlcGxhY2UgPSBUKSwgZGYkeSlcblxucHJvcC50YWJsZSh0YWJsZShkZiR5KSlcbmBgYCJ9 -->
+<pre class="r"><code>set.seed(123)
+rep_x &lt;- as.integer(500*c(50, 100, 150, 200))
+df &lt;- data.frame(x = rep(c(11,12, 21, 22), rep_x))
+df$x1 &lt;- ifelse(substr(df$x,1,1) == 1,  1, 2)
+df$x2 &lt;- ifelse(substr(df$x,2,2) == 1,  1, 2)
+df$y &lt;- NA
+df$y &lt;- ifelse(df$x == 11, sample(x = c(1,2,3), size = rep_x[1], prob = c(0.6 ,0.3, 0.1), replace = T), df$y)
+df$y &lt;- ifelse(df$x == 12, sample(x = c(1,2,3), size = rep_x[2], prob = c(0.3, 0.4, 0.3), replace = T), df$y)
+df$y &lt;- ifelse(df$x == 21, sample(x = c(1,2,3), size = rep_x[3], prob = c(0.1, 0.3, 0.6), replace = T), df$y)
+df$y &lt;- ifelse(df$x == 22, sample(x = c(1,2,3), size = rep_x[4], prob = c(0.2, 0.4, 0.4), replace = T), df$y)
+
+prop.table(table(df$y))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG4gICAgICAgMSAgICAgICAgMiAgICAgICAgMyBcbjAuMjMwMjIwIDAuMzYwNTUxIDAuNDA5MjI5IFxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG4gICAgICAgMSAgICAgICAgMiAgICAgICAgMyBcbjAuMjMwNTU2IDAuMzYxNDgwIDAuNDA3OTY0IFxuIn0= -->
 <pre><code>
        1        2        3 
-0.230220 0.360551 0.409229 </code></pre>
+0.230556 0.361480 0.407964 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Selection mechanism</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFibGUoc2VsKVxuXG5gYGAifQ== -->
-<pre class="r"><code>table(sel)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0LnNlZWQoMTIzKVxuZXRhIDwtIC0wLjQqKGRmJHgxID09IDIpICsgMC44KihkZiR5ID09IDIpXG5yaG8gPC0gZXhwKGV0YSkgLyAoMSArIGV4cChldGEpKVxuZGYkcHJvYnMgPC0gcmhvXG5zZWwgPC0gcmJpbm9tKG4gPSBucm93KGRmKSwgc2l6ZSA9IDEsIHByb2IgPSByaG8pXG50YWJsZShzZWwpXG5gYGAifQ== -->
+<pre class="r"><code>set.seed(123)
+eta &lt;- -0.4*(df$x1 == 2) + 0.8*(df$y == 2)
+rho &lt;- exp(eta) / (1 + exp(eta))
+df$probs &lt;- rho
+sel &lt;- rbinom(n = nrow(df), size = 1, prob = rho)
+table(sel)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoic2VsXG4gICAgIDAgICAgICAxIFxuNjMzNTkxIDM2NjQwOSBcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoic2VsXG4gICAgIDAgICAgICAxIFxuMTU4MTMxICA5MTg2OSBcbiJ9 -->
 <pre><code>sel
      0      1 
-633591 366409 </code></pre>
+158131  91869 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiU2ltdWxhdGlvbiBwb3B1bGF0aW9uIGRhdGEgYW5kIHNlbGVjdGlvbiBtZWNoYW5pc20iCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KClNpbXVsYXRpb24gc3R1ZHkgMSAtLSBwYXJhbWV0cmljIG1vZGVsIGZvciBtdWx0aW5vbWlhbCBjYXNlCgoKYGBge3J9CgpgYGAKCgoKU2ltdWxhdGlvbiBzdHVkeSAyIC0tIG5vbi1wYXJhbWV0cmljIG1vZGVsIGZvciBtdWx0aW5vbWlhbCBjYXNlIAoKeDE9MSwgeDI9MSwgeTEsIHkyLCB5MyAtIDAuNiwgMC4zLCAwLjEgCngxPTEsIHgyPTIsIHkxLCB5MiwgeTMgLSAwLjMsIDAuNCwgMC4zCngxPTIsIHgyPTEsIHkxLCB5MiwgeTMgLSAwLjEsIDAuMywgMC42CngxPTIsIHgyPTIsIHkxLCB5MiwgeTMgLSAwLjIsIDAuNCwgMC40CgpgYGB7cn0Kc2V0LnNlZWQoMTIzKQpyZXBfeCA8LSBhcy5pbnRlZ2VyKDIwMDAqYyg1MCwgMTAwLCAxNTAsIDIwMCkpCmRmIDwtIGRhdGEuZnJhbWUoeCA9IHJlcChjKDExLDEyLCAyMSwgMjIpLCByZXBfeCkpCmRmJHgxIDwtIGlmZWxzZShzdWJzdHIoZGYkeCwxLDEpID09IDEsICAxLCAyKQpkZiR4MiA8LSBpZmVsc2Uoc3Vic3RyKGRmJHgsMiwyKSA9PSAxLCAgMSwgMikKZGYkeSA8LSBOQQpkZiR5IDwtIGlmZWxzZShkZiR4ID09IDExLCBzYW1wbGUoeCA9IGMoMSwyLDMpLCBzaXplID0gcmVwX3hbMV0sIHByb2IgPSBjKDAuNiAsMC4zLCAwLjEpLCByZXBsYWNlID0gVCksIGRmJHkpCmRmJHkgPC0gaWZlbHNlKGRmJHggPT0gMTIsIHNhbXBsZSh4ID0gYygxLDIsMyksIHNpemUgPSByZXBfeFsyXSwgcHJvYiA9IGMoMC4zLCAwLjQsIDAuMyksIHJlcGxhY2UgPSBUKSwgZGYkeSkKZGYkeSA8LSBpZmVsc2UoZGYkeCA9PSAyMSwgc2FtcGxlKHggPSBjKDEsMiwzKSwgc2l6ZSA9IHJlcF94WzNdLCBwcm9iID0gYygwLjEsIDAuMywgMC42KSwgcmVwbGFjZSA9IFQpLCBkZiR5KQpkZiR5IDwtIGlmZWxzZShkZiR4ID09IDIyLCBzYW1wbGUoeCA9IGMoMSwyLDMpLCBzaXplID0gcmVwX3hbNF0sIHByb2IgPSBjKDAuMiwgMC40LCAwLjQpLCByZXBsYWNlID0gVCksIGRmJHkpCgpwcm9wLnRhYmxlKHRhYmxlKGRmJHkpKQpgYGAKClNlbGVjdGlvbiBtZWNoYW5pc20KCmBgYHtyfQpzZXQuc2VlZCgxMjMpCmV0YSA8LSAtMC40KihkZiR4MSA9PSAyKSArIDAuOCooZGYkeSA9PSAyKQpyaG8gPC0gZXhwKGV0YSkgLyAoMSArIGV4cChldGEpKQpzZWwgPC0gcmJpbm9tKG4gPSBucm93KGRmKSwgc2l6ZSA9IDEsIHByb2IgPSByaG8pCnRhYmxlKHNlbCkKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiU2ltdWxhdGlvbiBwb3B1bGF0aW9uIGRhdGEgYW5kIHNlbGVjdGlvbiBtZWNoYW5pc20iCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KClNpbXVsYXRpb24gc3R1ZHkgMSAtLSBwYXJhbWV0cmljIG1vZGVsIGZvciBtdWx0aW5vbWlhbCBjYXNlCgoKYGBge3J9CgpgYGAKCgoKIyBTaW11bGF0aW9uIHN0dWR5IDIgLS0gbm9uLXBhcmFtZXRyaWMgbW9kZWwgZm9yIG11bHRpbm9taWFsIGNhc2UgCgp4MT0xLCB4Mj0xLCB5MSwgeTIsIHkzIC0gMC42LCAwLjMsIDAuMSAKeDE9MSwgeDI9MiwgeTEsIHkyLCB5MyAtIDAuMywgMC40LCAwLjMKeDE9MiwgeDI9MSwgeTEsIHkyLCB5MyAtIDAuMSwgMC4zLCAwLjYKeDE9MiwgeDI9MiwgeTEsIHkyLCB5MyAtIDAuMiwgMC40LCAwLjQKCmBgYHtyfQpzZXQuc2VlZCgxMjMpCnJlcF94IDwtIGFzLmludGVnZXIoNTAwKmMoNTAsIDEwMCwgMTUwLCAyMDApKQpkZiA8LSBkYXRhLmZyYW1lKHggPSByZXAoYygxMSwxMiwgMjEsIDIyKSwgcmVwX3gpKQpkZiR4MSA8LSBpZmVsc2Uoc3Vic3RyKGRmJHgsMSwxKSA9PSAxLCAgMSwgMikKZGYkeDIgPC0gaWZlbHNlKHN1YnN0cihkZiR4LDIsMikgPT0gMSwgIDEsIDIpCmRmJHkgPC0gTkEKZGYkeSA8LSBpZmVsc2UoZGYkeCA9PSAxMSwgc2FtcGxlKHggPSBjKDEsMiwzKSwgc2l6ZSA9IHJlcF94WzFdLCBwcm9iID0gYygwLjYgLDAuMywgMC4xKSwgcmVwbGFjZSA9IFQpLCBkZiR5KQpkZiR5IDwtIGlmZWxzZShkZiR4ID09IDEyLCBzYW1wbGUoeCA9IGMoMSwyLDMpLCBzaXplID0gcmVwX3hbMl0sIHByb2IgPSBjKDAuMywgMC40LCAwLjMpLCByZXBsYWNlID0gVCksIGRmJHkpCmRmJHkgPC0gaWZlbHNlKGRmJHggPT0gMjEsIHNhbXBsZSh4ID0gYygxLDIsMyksIHNpemUgPSByZXBfeFszXSwgcHJvYiA9IGMoMC4xLCAwLjMsIDAuNiksIHJlcGxhY2UgPSBUKSwgZGYkeSkKZGYkeSA8LSBpZmVsc2UoZGYkeCA9PSAyMiwgc2FtcGxlKHggPSBjKDEsMiwzKSwgc2l6ZSA9IHJlcF94WzRdLCBwcm9iID0gYygwLjIsIDAuNCwgMC40KSwgcmVwbGFjZSA9IFQpLCBkZiR5KQoKcHJvcC50YWJsZSh0YWJsZShkZiR5KSkKYGBgCgpTZWxlY3Rpb24gbWVjaGFuaXNtCgpgYGB7cn0Kc2V0LnNlZWQoMTIzKQpldGEgPC0gLTAuNCooZGYkeDEgPT0gMikgKyAwLjgqKGRmJHkgPT0gMikKcmhvIDwtIGV4cChldGEpIC8gKDEgKyBleHAoZXRhKSkKZGYkcHJvYnMgPC0gcmhvCnNlbCA8LSByYmlub20obiA9IG5yb3coZGYpLCBzaXplID0gMSwgcHJvYiA9IHJobykKdGFibGUoc2VsKQpgYGAKCmBgYHtyfQpzYXZlUkRTKG9iamVjdCA9IGRmLCBmaWxlID0gIi4uL2RhdGEvZGYtc2ltLW5vbnBhci5yZHMiKQpgYGAKCg==</div>
 
 
 
