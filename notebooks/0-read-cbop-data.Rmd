@@ -8,6 +8,7 @@ library(fst)
 library(data.table)
 library(tidyverse)
 library(lubridate)
+library(readxl)
 ```
 
 Read cbop data and adjust the defition of units
@@ -16,7 +17,6 @@ Read cbop data and adjust the defition of units
 ```{r}
 cbop2018 <- read_fst("~/git/zbiory/cbop/cbop2018_df.fst")
 
-cbop2018[prac_id != "" & data_waz_do != "" & data_waz_od != "" & kod_woj != "" &  oferta_eures == "false" & oferta_kraj == "false" ]
 
 cbop2018 %>%
   mutate(data_waz_do = ymd(data_waz_do),
@@ -45,7 +45,8 @@ cbop2018 %>%
                                kod_syst_wynagr %in% c("Prowizyjny", "Akordowy") ~ "Results payment", 
                                kod_syst_wynagr %in% c("Czasowo-premiowy ze staw. godz", "Czasowo-premiowy ze staw. mies",
                                                       "Czasowo-prowizyjny")  ~ "Commision payment"),
-         kod_rodz_zatrud = ifelse(kod_rodz_zatrud %in% c("Umowa o pracę w zastępstwie", "Umowa na czas wyk. określonej pracy"),
+         kod_rodz_zatrud = ifelse(kod_rodz_zatrud %in% 
+                                    c("Umowa o pracę w zastępstwie", "Umowa na czas wyk. określonej pracy"),
                                   "other", kod_rodz_zatrud),
          przez_prac = str_detect(kod_kategorii_oferty_pracy, "zgłoszona przez pracodawcę"),
          zawod1=substr(kod_zawodu, 1,1),
@@ -69,6 +70,10 @@ saveRDS(object = cbop_2018_1, file = "../data/df-cbop-2018Q1.rds")
 
 ```{r}
 cbop_2018_1 %>%
-  count(kod_rodz_zatrud) 
+  count(przez_prac, kod_rodz_zatrud) %>%
+  group_by(przez_prac) %>%
+  mutate(p  = n/sum(n)*100)
 ```
+
+
 
