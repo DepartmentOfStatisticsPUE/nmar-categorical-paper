@@ -1,0 +1,74 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(fst)
+library(data.table)
+library(tidyverse)
+library(lubridate)
+```
+
+Read cbop data and adjust the defition of units
+
+
+```{r}
+cbop2018 <- read_fst("~/git/zbiory/cbop/cbop2018_df.fst")
+
+cbop2018[prac_id != "" & data_waz_do != "" & data_waz_od != "" & kod_woj != "" &  oferta_eures == "false" & oferta_kraj == "false" ]
+
+cbop2018 %>%
+  mutate(data_waz_do = ymd(data_waz_do),
+         data_waz_od = ymd(data_waz_od),
+         data_archiw =  ymd(data_archiw),
+         liczba_miejsc_og = as.numeric(liczba_miejsc_og),
+         liczba_miejsc_npsp = as.numeric(liczba_miejsc_npsp)) %>%
+  filter(prac_regon != "", prac_nip != "") %>%
+  filter(!is.na(data_waz_do), !is.na(data_waz_od)) %>%
+  filter(kod_woj != "", oferta_eures == "false", oferta_kraj == "false") %>%
+  filter(data_waz_od <= as.Date("2018-03-31"), 
+         data_waz_do > as.Date("2018-03-31"),
+         data_archiw > as.Date("2018-03-31"),
+         substr(kod_zawodu, 1,1) != "6", 
+         waluta == "Złoty",
+         liczba_miejsc_og > 0, 
+         !str_detect(kod_kategorii_oferty_pracy, "wolontariatu"),
+         !kod_rodz_zatrud %in% c("Nie dotyczy", "Umowa o dzieło", "Umowa zlecenie / Umowa o świadczenie usług",
+                                 "Wybór", "Powołanie", "Mianowanie", ""),
+         kod_syst_wynagr != "",
+         kod_rodz_zatrud != "Spółdzielcza umowa o pracę")  %>%
+  mutate(sys_wynag = case_when(kod_syst_wynagr == "Czasowy ze stawką miesięczną" ~ "Monthly payment",
+                               kod_syst_wynagr %in% c("Ryczałtowy", 
+                                                      "Czasowy ze stawką godzinową", 
+                                                      "Czasowy ze stawką tygodniową")  ~ "Hourly/weekly payment",
+                               kod_syst_wynagr %in% c("Prowizyjny", "Akordowy") ~ "Results payment", 
+                               kod_syst_wynagr %in% c("Czasowo-premiowy ze staw. godz", "Czasowo-premiowy ze staw. mies",
+                                                      "Czasowo-prowizyjny")  ~ "Commision payment"),
+         kod_rodz_zatrud = ifelse(kod_rodz_zatrud %in% c("Umowa o pracę w zastępstwie", "Umowa na czas wyk. określonej pracy"),
+                                  "other", kod_rodz_zatrud),
+         przez_prac = str_detect(kod_kategorii_oferty_pracy, "zgłoszona przez pracodawcę"),
+         zawod1=substr(kod_zawodu, 1,1),
+         dzial =substr(prac_kod_pkd2007,1,2)) %>%
+  filter(kod_rodz_zatrud != "other",
+         !przyczyna_arch_dziedzinowa %in% c("anulowana", "odrzucona")) %>%
+  select(kod_plac:data_waz_do,liczba_miejsc_og,kod_zawodu,zawod1,kod_syst_wynagr, sys_wynag, kod_rodz_zatrud,
+         kod_zmianowosci, liczba_godz_tyg, kod_kategorii_oferty_pracy, przez_prac,
+         przyczyna_arch_dziedzinowa,gmina_do_statystyk,prac_nazwa, prac_kod_pkd2007,prac_nip,prac_regon,dzial) %>%
+  left_join(read_excel("~/git/zbiory/gus-popyt/wolne.xlsx") %>% 
+              count(dzial = DZIAL, pkd = SEKC_PKD) %>% 
+              select(-n)) %>%
+  mutate(pkd = ifelse(dzial == "94", "S", pkd),
+         nace = ifelse(pkd %in% c("A", "B", "D", "E", "K", "L", "P", "R", "S"), "other", pkd)) %>%
+  filter(!is.na(pkd)) -> cbop_2018_1
+
+
+saveRDS(object = cbop_2018_1, file = "../data/df-cbop-2018Q1.rds")
+```
+
+
+```{r}
+cbop_2018_1 %>%
+  count(kod_rodz_zatrud) 
+```
+

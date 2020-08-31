@@ -1,0 +1,50 @@
+---
+title: "Demand for labour"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(fst)
+```
+
+List sheets
+
+```{r}
+excel_sheets("../data-raw/z51_tabw00.xlsx")
+```
+
+Tables with information about vacancies -- 2018 I quarter
+
+
+```{r}
+read_excel(path = "../data-raw/z51_tabw00.xlsx",
+                        sheet = "t15", skip = 11,
+                        col_names = c("occup", "total", LETTERS[1:19])) %>%
+  filter(str_detect(occup, "^6", negate = T)) %>%
+  filter(str_detect(occup, "^\\d{2}", negate = T)) %>%
+  select(-total) %>%
+  gather(nace, vacc, -occup) %>%
+  mutate(nace = ifelse(nace %in% c("A", "B", "D", "E", "K", "L", "P", "R", "S"), "other", nace)) %>%
+  count(occup, nace, wt = vacc, name = "jvs") %>%
+  mutate(occup = str_extract(occup, "\\d{1}")) -> occup_pkd
+
+occup_pkd 
+```
+
+```{r}
+saveRDS(object = occup_pkd, file = "../data/df-demand-totals.rds")
+```
+
+
+Read "big data" register data
+
+
+
+
+```{r}
+cbop_2018_1 %>% count(kod_rodz_zatrud)
+```
+
