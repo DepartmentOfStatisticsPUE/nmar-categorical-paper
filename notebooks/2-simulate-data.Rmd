@@ -25,9 +25,15 @@ df$y <- ifelse(df$x == 22, sample(x = c(1,2,3), size = rep_x[4], prob = c(0.2, 0
 
 prop.table(table(df$y))
 
+## nmar (x1 and y)
 eta <- -0.4*(df$x1 == 2) + 0.8*(df$y == 2)
 rho <- exp(eta) / (1 + exp(eta))
-df$probs <- rho
+df$probs_nmar <- rho
+
+## mar (only on x1, x2)
+eta <- -0.4*(df$x1 == 2) + 0.8*(df$x2 == 1)
+rho <- exp(eta) / (1 + exp(eta))
+df$probs_mar <- rho
 
 saveRDS(object = df, file = "../data/df-sim-nonpar.rds")
 ```
@@ -54,6 +60,9 @@ prop.table(table(df$y))
 
 # Simulation study 3 -- using real data from cbop
 
+```{r}
+
+```
 
 
 
