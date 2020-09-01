@@ -61,9 +61,32 @@ prop.table(table(df$y))
 # Simulation study 3 -- using real data from cbop
 
 ```{r}
+cbop <- readRDS(file = "../data/df-cbop-2018Q1.rds")
+cbop$y <-factor(cbop$kod_rodz_zatrud, 
+                c("Umowa o pracę na okres próbny", "Umowa o pracę na czas określony",
+                  "Umowa o pracę na czas nieokreślony"),
+                1:3)
 
+# Missing data mechanisms
+
+## 1 and 3 category are less likely to be observed
+eta_13 <- -0.8*(cbop$y == 1) - 0.5*(cbop$y == 3)
+rho_13 <- exp(eta_13) / (1 + exp(eta_13))
+cbop$probs_nmar_13 <- rho_13
+
+eta_2 <- -0.8*(cbop$y == 2)
+rho_2 <- exp(eta_2) / (1 + exp(eta_2))
+cbop$probs_nmar_2 <- rho_2
+
+#cbop$flag_13 <- rbinom(n = nrow(cbop), size = 1, prob = cbop$probs_nmar_13)
+#cbop$flag_2 <- rbinom(n = nrow(cbop), size = 1, prob = cbop$probs_nmar_2)
+
+#table(cbop$flag_13)
+#table(cbop$flag_2)
+
+#prop.table(table(cbop$y[cbop$flag_13==1]))
+#prop.table(table(cbop$y[cbop$flag_2==1]))
+#prop.table(table(cbop$y))
 ```
-
-
 
 

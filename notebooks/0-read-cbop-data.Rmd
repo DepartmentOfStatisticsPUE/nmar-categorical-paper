@@ -73,6 +73,10 @@ cbop_2018_1 %>%
   count(przez_prac, kod_rodz_zatrud) %>%
   group_by(przez_prac) %>%
   mutate(p  = n/sum(n)*100)
+
+cbop_2018_1 %>%
+  count(kod_rodz_zatrud) %>%
+  mutate(p  = n/sum(n)*100)
 ```
 
 
