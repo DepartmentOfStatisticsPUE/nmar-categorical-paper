@@ -79,16 +79,20 @@ Correlation with target variable
 ```{r}
 tab_nace <- xtabs(liczba_miejsc_og ~ nace + kod_rodz_zatrud, data = cbop)
 tab_occup <- xtabs(liczba_miejsc_og ~ zawod1 + kod_rodz_zatrud, data = cbop)
+tab_woj <- xtabs(liczba_miejsc_og ~ kod_woj + kod_rodz_zatrud, data = cbop)
+
 ```
 
 ```{r}
 assocstats(tab_nace)
 assocstats(tab_occup)
+assocstats(tab_woj)
 ```
 
 ```{r}
 ca(tab_nace) %>% plot()
 ca(tab_occup) %>% plot()
+ca(tab_woj) %>% plot()
 ```
 
 ```{r}

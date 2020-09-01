@@ -1,0 +1,47 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(survey)
+library(maxLik)
+library(rootSolve)
+```
+
+```{r}
+cbop <- readRDS(file = "../data/df-cbop-2018Q1.rds")
+totals <- readRDS(file = "../data/df-demand-totals.rds")
+cbop$weight <- cbop$liczba_miejsc_og*sum(totals$jvs) / sum(cbop$liczba_miejsc_og)
+sum(cbop$weight)
+sum(totals$jvs)
+```
+
+Calibration
+
+```{r}
+cbop$occup <- cbop$zawod1
+cbop_svy <- svydesign(id =~1, weights = ~weight, data = cbop)
+```
+
+```{r}
+totals_nace <- xtabs(jvs ~ nace, totals)
+totals_occup <- xtabs(jvs ~ occup, totals)
+totals_nace_occup <- xtabs(jvs ~ nace + occup, totals)
+```
+
+```{r}
+cbop_svy_cal_occup <- calibrate(design = cbop_svy, formula = list(~ occup), population = list(totals_occup))
+cbop_svy_cal_nace <- calibrate(design = cbop_svy, formula = list(~ nace), population = list(totals_nace))
+cbop_svy_cal_nace_occup <- calibrate(design = cbop_svy, formula = list(~ nace + occup), 
+                                     population = list(totals_nace_occup))
+```
+
+```{r}
+prop.table(svytable(~ kod_rodz_zatrud, cbop_svy))
+prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_occup))
+prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_nace))
+prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_nace_occup))
+```
+
