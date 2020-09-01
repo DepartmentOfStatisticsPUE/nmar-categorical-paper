@@ -52,3 +52,5 @@ prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_nace))
 prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_nace_occup))
 ```
 
+
+

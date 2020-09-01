@@ -4,6 +4,163 @@ output: html_notebook
 ---
 
 ```{r}
+library(gmm)
+```
 
+# Simulation study -- non-parametric 
+
+```{r}
+nonpar_df <- readRDS(file = "../data/df-sim-nonpar.rds")
+nonpar_df$y <- as.factor(nonpar_df$y)
+nonpar_df$x1 <- as.factor(nonpar_df$x1)
+nonpar_df$x2 <- as.factor(nonpar_df$x2)
+## eta <- 1 +  1(df$y == 2)
+set.seed(123)
+flag <- rbinom(n = NROW(nonpar_df), size = 1, prob = nonpar_df$probs_mar) 
+nonpar_df$d <- flag
+head(nonpar_df)
+prop.table(table(nonpar_df$y))
+prop.table(table(nonpar_df$y[nonpar_df$d==1]))
+```
+
+### Calibration
+
+```{r}
+Xs <- totals <- xtabs(~ x1 + x2, data = nonpar_df)
+y_des <- svydesign(ids =~ 1, data = subset(nonpar_df, d == 1))
+y_des_cal <- calibrate(y_des, formula = list(~ x1 + x2), population = list(Xs))
+prop.table(svytable(~y, y_des))
+prop.table(svytable(~y, y_des_cal))
+prop.table(table(nonpar_df$y))
+```
+
+### Chang-Kott / Kott-Chang model
+
+```{r}
+totals <- colSums(model.matrix(~ x1 + x2, data = nonpar_df))
+X <- model.matrix(~ -1 + I(y==1), data = subset(nonpar_df, d==1))
+Z <- model.matrix(~ x1++x2, data = subset(nonpar_df, d==1))
+phi <- rep(0, ncol(X))
+d <- rep(nrow(nonpar_df)/nrow(X), nrow(Z))
+
+#p_i <- as.numeric(exp(X %*% phi) / (1 + exp(X %*% phi)))
+p_i <- as.numeric((1 + exp(- X %*% phi)) ^ {-1})
+U <- colSums( (d/ p_i -1)*Z) - totals
+
+## rows - for totals, cols for propensity
+S <- matrix(0, ncol(Z), ncol(X))
+print(S)
+
+S[1, 1] = -sum(d *(1 - p_i) * Z[,1]*X[,1] / p_i)
+S[1, 2] = -sum(d *(1 - p_i) * Z[,1]*X[,2] / p_i)
+#S[1, 3] = -sum(d *(1 - p_i) * Z[,1]*X[,3] / p_i)
+
+S[2, 1] = -sum(d *(1 - p_i) * Z[, 2]*X[,1] / p_i)
+S[2, 2] = -sum(d *(1 - p_i) * Z[, 2]*X[,2] / p_i)
+#S[2, 3] = -sum(d *(1 - p_i) * Z[, 2]*X[,3] / p_i)
+
+S[3, 1] = -sum(d *(1 - p_i) * Z[, 3]*X[,1] / p_i)
+S[3, 2] = -sum(d *(1 - p_i) * Z[, 3]*X[,2] / p_i)
+#S[3, 3] = -sum(d *(1 - p_i) * Z[, 3]*X[,3] / p_i)
+
+phi <- phi - MASS::ginv(t(S) %*% S) %*% (t(S) %*% U)
+print(phi)
+p_i <- as.numeric(exp(X %*% phi) / (1 + exp(X %*% phi)))
+U <- colSums( (d/ p_i -1)*Z) - totals
+print(U)
+
+```
+
+```{r}
+ll_chang_kott <- function(params, data) {
+  X <- data$X
+  Z <- data$Z
+  totals <- data$totals
+  w <- data$w
+  p_i <- as.numeric(exp(X %*% params) / (1 + exp(X %*% params)))
+ 
+  dif <- colSums(w * Z / p_i) - totals
+  dif
+}
+
+```
+
+```{r}
+totals <- colSums(model.matrix(~ x1 + x2, data = nonpar_df))
+X <- model.matrix(~ y, data = subset(nonpar_df, d==1))
+Z <- model.matrix(~ x1+x2, data = subset(nonpar_df, d==1))
+phi <- rep(0, ncol(X))
+d <- rep(nrow(nonpar_df)/nrow(X), nrow(Z))
+
+res <- multiroot(f = ll_chang_kott, 
+                 start = rep(0, ncol(X)), 
+                 data = list(X=X, Z=Z,
+                             totals=totals,
+                             w = d))
+
+res$root
+
+p_i <- as.numeric(exp(X %*% res$root) / (1 + exp(X %*% res$root)))
+
+```
+
+# Simulation study -- cbop
+
+```{r}
+cbop_sim <- readRDS(file = "../data/df-sim-cbop.rds")
+## eta <- 1 +  1(df$y == 2)
+set.seed(12452525)
+flag <- rbinom(n = NROW(cbop_sim), size = 1, prob = cbop_sim$probs_nmar_13) 
+cbop_sim$d <- flag
+prop.table(table(cbop_sim$y))
+prop.table(table(cbop_sim$y[cbop_sim$d==1]))
+```
+
+```{r}
+totals <- colSums(model.matrix(~ zawod1, data = cbop_sim))
+X <- model.matrix(~ y, data = subset(cbop_sim, d==1))
+Z <- model.matrix(~ zawod1, data = subset(cbop_sim, d==1))
+phi <- rep(0, ncol(X))
+d <- rep(nrow(cbop_sim)/nrow(X), nrow(Z))
+
+#p_i <- as.numeric(exp(X %*% phi) / (1 + exp(X %*% phi)))
+p_i <- as.numeric((1 + exp(- X %*% phi)) ^ {-1})
+U <- colSums( d*(1/ p_i -1)*Z) - totals
+
+## rows - for totals, cols for propensity
+S <- matrix(0, ncol(Z), ncol(X))
+#print(S)
+
+for (i in 1:ncol(Z)) {
+  for (j in 1:ncol(X)) {
+    S[i, j] = -sum(d *(1 - p_i) * Z[,i]*X[,j] / p_i)
+  }
+}
+
+phi <- phi - MASS::ginv(t(S) %*% S) %*% (t(S) %*% U)
+print(phi)
+p_i <- as.numeric(exp(X %*% phi) / (1 + exp(X %*% phi)))
+U <- colSums( d*(1/ p_i -1)*Z) - totals
+print(U)
+
+testing <- subset(cbop_sim, d==1)
+testing$rho <- 1/p_i
+testing$d <- d
+
+
+## > mmm/sum(mmm)
+# y1        y2        y3 
+# 0.3882218 0.5002960 0.1114822 
+testing %>%
+  count(y, wt = d*rho) %>%
+  mutate( p = n/sum(n))
+
+testing %>%
+  count(y, wt = d) %>%
+  mutate( p = n/sum(n))
+
+cbop_sim %>%
+  count(y) %>%
+  mutate(p = n/sum(n))
 ```
 

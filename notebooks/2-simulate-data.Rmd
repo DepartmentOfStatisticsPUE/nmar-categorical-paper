@@ -26,12 +26,12 @@ df$y <- ifelse(df$x == 22, sample(x = c(1,2,3), size = rep_x[4], prob = c(0.2, 0
 prop.table(table(df$y))
 
 ## nmar (x1 and y)
-eta <- -0.4*(df$x1 == 2) + 0.8*(df$y == 2)
+eta <- 1 +  (df$y == 2)
 rho <- exp(eta) / (1 + exp(eta))
 df$probs_nmar <- rho
 
 ## mar (only on x1, x2)
-eta <- -0.4*(df$x1 == 2) + 0.8*(df$x2 == 1)
+eta <- 1 + (df$x1 == 1)
 rho <- exp(eta) / (1 + exp(eta))
 df$probs_mar <- rho
 
@@ -72,11 +72,11 @@ cbop <- cbop[,c("id", "nr_oferty", "zawod1", "kod_rodz_zatrud", "y", "nace")]
 # Missing data mechanisms
 
 ## 1 and 3 category are less likely to be observed
-eta_13 <- -0.8*(cbop$y == 1) - 0.5*(cbop$y == 3)
+eta_13 <- 1.5*(cbop$y == 1) + 1.5*(cbop$y == 3)
 rho_13 <- exp(eta_13) / (1 + exp(eta_13))
 cbop$probs_nmar_13 <- rho_13
 
-eta_2 <- -0.8*(cbop$y == 2)
+eta_2 <- 1 -0.8*(cbop$y == 2)
 rho_2 <- exp(eta_2) / (1 + exp(eta_2))
 cbop$probs_nmar_2 <- rho_2
 
