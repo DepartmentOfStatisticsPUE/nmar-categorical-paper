@@ -38,6 +38,7 @@ cbop2018 %>%
                                  "Wybór", "Powołanie", "Mianowanie", ""),
          kod_syst_wynagr != "",
          kod_rodz_zatrud != "Spółdzielcza umowa o pracę")  %>%
+  #count(kod_rodz_zatrud, wt = liczba_miejsc_og)
   mutate(sys_wynag = case_when(kod_syst_wynagr == "Czasowy ze stawką miesięczną" ~ "Monthly payment",
                                kod_syst_wynagr %in% c("Ryczałtowy", 
                                                       "Czasowy ze stawką godzinową", 
@@ -47,12 +48,11 @@ cbop2018 %>%
                                                       "Czasowo-prowizyjny")  ~ "Commision payment"),
          kod_rodz_zatrud = ifelse(kod_rodz_zatrud %in% 
                                     c("Umowa o pracę w zastępstwie", "Umowa na czas wyk. określonej pracy"),
-                                  "other", kod_rodz_zatrud),
+                                  "Umowa o pracę na czas określony", kod_rodz_zatrud),
          przez_prac = str_detect(kod_kategorii_oferty_pracy, "zgłoszona przez pracodawcę"),
          zawod1=substr(kod_zawodu, 1,1),
          dzial =substr(prac_kod_pkd2007,1,2)) %>%
-  filter(kod_rodz_zatrud != "other",
-         !przyczyna_arch_dziedzinowa %in% c("anulowana", "odrzucona")) %>%
+  filter(!przyczyna_arch_dziedzinowa %in% c("anulowana", "odrzucona")) %>%
   select(kod_plac:data_waz_do,liczba_miejsc_og,nazwa_stan, 
          kod_zawodu,zawod1,kod_syst_wynagr, sys_wynag, kod_rodz_zatrud,
          kod_zmianowosci, liczba_godz_tyg, kod_kategorii_oferty_pracy, przez_prac,
@@ -71,12 +71,21 @@ saveRDS(object = cbop_2018_1, file = "../data/df-cbop-2018Q1.rds")
 
 ```{r}
 cbop_2018_1 %>%
-  count(przez_prac, kod_rodz_zatrud) %>%
-  group_by(przez_prac) %>%
-  mutate(p  = n/sum(n)*100)
+  count(zawod1, kod_rodz_zatrud, wt = as.numeric(liczba_godz_tyg)) %>%
+  group_by(zawod1) %>%
+  mutate(p  = n/sum(n)*100) %>%
+  ggplot(data = ., aes(x = zawod1, y = p, fill = kod_rodz_zatrud)) +
+  geom_col()
 
 cbop_2018_1 %>%
-  count(kod_rodz_zatrud) %>%
+  count(przez_prac, kod_rodz_zatrud, wt = as.numeric(liczba_godz_tyg)) %>%
+  group_by(przez_prac) %>%
+  mutate(p  = n/sum(n)*100) %>%
+  ggplot(data = ., aes(x = przez_prac, y = p, fill = kod_rodz_zatrud)) +
+  geom_col()
+
+cbop_2018_1 %>%
+  count(kod_rodz_zatrud,wt = as.numeric(liczba_godz_tyg)) %>%
   mutate(p  = n/sum(n)*100)
 ```
 

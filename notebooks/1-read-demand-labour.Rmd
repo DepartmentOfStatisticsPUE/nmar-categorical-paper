@@ -34,14 +34,24 @@ read_excel(path = "../data-raw/z51_tabw00.xlsx",
 occup_pkd 
 ```
 
+
+
 ```{r}
 saveRDS(object = occup_pkd, file = "../data/df-demand-totals.rds")
 ```
 
 
-Read "big data" register data
-
-
+```{r}
+read_excel(path = "../data-raw/popyt_na_prace_w_2018_-_tablice.xlsx", 
+           sheet = "Tab 22", 
+           skip = 8,
+           col_names = c("region", "kw1", "kw2", "kw3", "kw4", "avg")) %>%
+  filter(!is.na(region)) %>% 
+  filter(!str_detect(region, "OGÓŁEM|TOTAL|MAKRO")) %>%
+  select(region, kw1) %>%
+  mutate(kw1 = str_replace(kw1, ",", "."),
+         kw1 = as.numeric(kw1))  
+```
 
 
 ```{r}
