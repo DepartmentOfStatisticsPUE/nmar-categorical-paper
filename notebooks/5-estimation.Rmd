@@ -41,6 +41,11 @@ cbop_svy_cal_nace_occup <- calibrate(design = cbop_svy, formula = list(~ nace + 
 ```
 
 ```{r}
+prop.table(svytable(~ zmiany, cbop_svy))
+prop.table(svytable(~ zmiany, cbop_svy_cal_occup))
+prop.table(svytable(~ zmiany, cbop_svy_cal_nace))
+prop.table(svytable(~ zmiany, cbop_svy_cal_nace_occup))
+
 prop.table(svytable(~ kod_rodz_zatrud, cbop_svy))
 prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_occup))
 prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_nace))
