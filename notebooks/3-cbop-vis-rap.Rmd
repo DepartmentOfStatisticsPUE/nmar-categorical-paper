@@ -1,0 +1,99 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(maxLik)
+library(scales)
+library(ca)
+library(vcd)
+theme_set(theme_bw())
+```
+
+```{r}
+cbop <- readRDS(file = "../data/df-cbop-2018Q1.rds")
+totals <- readRDS(file = "../data/df-demand-totals.rds")
+```
+
+Compare distributions
+
+-- occupancy
+
+```{r}
+cbop %>%
+  count(occup = zawod1, wt = liczba_miejsc_og, name = "cbop")  %>%
+  left_join(totals %>% count(occup, wt = jvs, name = "jvs")) -> occup_vals
+
+occup_vals %>%
+  gather(stats, vals, -occup) %>%
+  mutate(occup = as.factor(occup)) %>%
+  ggplot(data = ., aes(x = occup, y = vals, fill = stats)) +
+  geom_col(position = "dodge", color = "black") + 
+  labs(x = "Occupation", y = "Number of vacancies", fill = "Source") +
+  scale_fill_brewer(type = "qual", palette = "Set1")
+
+occup_vals %>%
+  gather(stats, vals, -occup) %>%
+  mutate(occup = as.factor(occup)) %>%
+  add_count(stats, wt = vals, name = "total") %>%
+  mutate(p = vals/total) %>%
+  ggplot(data = ., aes(x = occup, y = p, fill = stats)) +
+  geom_col(position = "dodge", color = "black") + 
+  labs(x = "Occupation", y = "Shares", fill = "Source") +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  scale_y_continuous(labels = percent_format())
+
+```
+
+-- nace
+
+```{r}
+cbop %>%
+  count(nace, wt = liczba_miejsc_og, name = "cbop")  %>%
+  left_join(totals %>% count(nace, wt = jvs, name = "jvs")) -> nace_vals
+
+nace_vals %>%
+  gather(stats, vals, -nace) %>%
+  mutate(nace = as.factor(nace)) %>%
+  ggplot(data = ., aes(x = nace, y = vals, fill = stats)) +
+  geom_col(position = "dodge", color = "black") + 
+  labs(x = "NACE", y = "Number of vacancies", fill = "Source") +
+  scale_fill_brewer(type = "qual", palette = "Set1")
+
+nace_vals %>%
+  gather(stats, vals, -nace) %>%
+  mutate(nace = as.factor(nace)) %>%
+  add_count(stats, wt = vals, name = "total") %>%
+  mutate(p = vals/total) %>%
+  ggplot(data = ., aes(x = nace, y = p, fill = stats)) +
+  geom_col(position = "dodge", color = "black") + 
+  labs(x = "NACE", y = "Shares", fill = "Source") +
+  scale_fill_brewer(type = "qual", palette = "Set1") +
+  scale_y_continuous(labels = percent_format())
+```
+
+Correlation with target variable
+
+```{r}
+tab_nace <- xtabs(liczba_miejsc_og ~ nace + kod_rodz_zatrud, data = cbop)
+tab_occup <- xtabs(liczba_miejsc_og ~ zawod1 + kod_rodz_zatrud, data = cbop)
+```
+
+```{r}
+assocstats(tab_nace)
+assocstats(tab_occup)
+```
+
+```{r}
+ca(tab_nace) %>% plot()
+ca(tab_occup) %>% plot()
+```
+
+```{r}
+cbop %>% 
+  filter(str_detect(kod_rodz_zatrud, "nieokreślony")) %>%
+  filter(zawod1 == 2)
+```
+

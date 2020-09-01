@@ -53,7 +53,8 @@ cbop2018 %>%
          dzial =substr(prac_kod_pkd2007,1,2)) %>%
   filter(kod_rodz_zatrud != "other",
          !przyczyna_arch_dziedzinowa %in% c("anulowana", "odrzucona")) %>%
-  select(kod_plac:data_waz_do,liczba_miejsc_og,kod_zawodu,zawod1,kod_syst_wynagr, sys_wynag, kod_rodz_zatrud,
+  select(kod_plac:data_waz_do,liczba_miejsc_og,nazwa_stan, 
+         kod_zawodu,zawod1,kod_syst_wynagr, sys_wynag, kod_rodz_zatrud,
          kod_zmianowosci, liczba_godz_tyg, kod_kategorii_oferty_pracy, przez_prac,
          przyczyna_arch_dziedzinowa,gmina_do_statystyk,prac_nazwa, prac_kod_pkd2007,prac_nip,prac_regon,dzial) %>%
   left_join(read_excel("~/git/zbiory/gus-popyt/wolne.xlsx") %>% 
