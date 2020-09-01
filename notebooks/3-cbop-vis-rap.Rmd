@@ -23,8 +23,13 @@ Compare distributions
 
 ```{r}
 cbop %>%
+  filter(przez_prac) %>%
   count(occup = zawod1, wt = liczba_miejsc_og, name = "cbop")  %>%
   left_join(totals %>% count(occup, wt = jvs, name = "jvs")) -> occup_vals
+
+
+occup_vals %>%
+  mutate(p = cbop / jvs*100)
 
 occup_vals %>%
   gather(stats, vals, -occup) %>%
@@ -51,8 +56,12 @@ occup_vals %>%
 
 ```{r}
 cbop %>%
+  filter(przez_prac) %>%
   count(nace, wt = liczba_miejsc_og, name = "cbop")  %>%
   left_join(totals %>% count(nace, wt = jvs, name = "jvs")) -> nace_vals
+
+nace_vals %>%
+  mutate(p = cbop / jvs*100)
 
 nace_vals %>%
   gather(stats, vals, -nace) %>%
@@ -89,14 +98,19 @@ tab_woj_zmiany <- xtabs(liczba_miejsc_og ~ kod_woj + zmiany, data = cbop)
 ```
 
 ```{r}
+cat("==============================\n")
 assocstats(tab_nace)
+cat("==============================\n")
 assocstats(tab_occup)
+cat("==============================\n")
 assocstats(tab_woj)
-
+cat("==============================\n")
 assocstats(tab_nace_zmiany)
+cat("==============================\n")
 assocstats(tab_occup_zmiany)
+cat("==============================\n")
 assocstats(tab_woj_zmiany)
-
+cat("==============================\n")
 ```
 
 ```{r}
@@ -110,9 +124,4 @@ ca(tab_woj_zmiany) %>% plot()
 
 ```
 
-```{r}
-cbop %>% 
-  filter(str_detect(kod_rodz_zatrud, "nieokreślony")) %>%
-  filter(zawod1 == 2)
-```
 

@@ -23,8 +23,8 @@ Calibration
 ```{r}
 cbop$occup <- cbop$zawod1
 cbop_svy <- svydesign(id =~1, weights = ~weight, 
-                      data = cbop)
-                      #data = subset(cbop, str_detect(kod_kategorii_oferty_pracy,"zgłoszona przez pracodawcę")))
+                      #data = cbop)
+                      data = subset(cbop, str_detect(kod_kategorii_oferty_pracy,"zgłoszona przez pracodawcę")))
 ```
 
 ```{r}
