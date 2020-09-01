@@ -81,18 +81,33 @@ tab_nace <- xtabs(liczba_miejsc_og ~ nace + kod_rodz_zatrud, data = cbop)
 tab_occup <- xtabs(liczba_miejsc_og ~ zawod1 + kod_rodz_zatrud, data = cbop)
 tab_woj <- xtabs(liczba_miejsc_og ~ kod_woj + kod_rodz_zatrud, data = cbop)
 
+tab_nace_zmiany <- xtabs(liczba_miejsc_og ~ nace + zmiany, data = cbop)
+tab_occup_zmiany <- xtabs(liczba_miejsc_og ~ zawod1 + zmiany, data = cbop)
+tab_woj_zmiany <- xtabs(liczba_miejsc_og ~ kod_woj + zmiany, data = cbop)
+
+
 ```
 
 ```{r}
 assocstats(tab_nace)
 assocstats(tab_occup)
 assocstats(tab_woj)
+
+assocstats(tab_nace_zmiany)
+assocstats(tab_occup_zmiany)
+assocstats(tab_woj_zmiany)
+
 ```
 
 ```{r}
 ca(tab_nace) %>% plot()
 ca(tab_occup) %>% plot()
 ca(tab_woj) %>% plot()
+
+ca(tab_nace_zmiany) %>% plot()
+ca(tab_occup_zmiany) %>% plot()
+ca(tab_woj_zmiany) %>% plot()
+
 ```
 
 ```{r}
