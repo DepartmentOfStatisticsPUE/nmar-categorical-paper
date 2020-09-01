@@ -109,8 +109,8 @@ p_i <- as.numeric(exp(X %*% res$root) / (1 + exp(X %*% res$root)))
 ```{r}
 cbop_sim <- readRDS(file = "../data/df-sim-cbop.rds")
 ## eta <- 1 +  1(df$y == 2)
-set.seed(12452525)
-flag <- rbinom(n = NROW(cbop_sim), size = 1, prob = cbop_sim$probs_nmar_13) 
+set.seed(666)
+flag <- rbinom(n = NROW(cbop_sim), size = 1, prob = cbop_sim$probs_nmar_2) 
 cbop_sim$d <- flag
 prop.table(table(cbop_sim$y))
 prop.table(table(cbop_sim$y[cbop_sim$d==1]))
@@ -141,7 +141,7 @@ phi <- phi - MASS::ginv(t(S) %*% S) %*% (t(S) %*% U)
 print(phi)
 p_i <- as.numeric(exp(X %*% phi) / (1 + exp(X %*% phi)))
 U <- colSums( d*(1/ p_i -1)*Z) - totals
-print(U)
+print(sum(abs(U)))
 
 testing <- subset(cbop_sim, d==1)
 testing$rho <- 1/p_i
