@@ -31,7 +31,7 @@ nmar_chang_kott <- function(Y, X, Z, d, totals, link = "logit", control) {
       }
     }
     
-    phi <- phi0 - solve(t(S) %*% S) %*% (t(S) %*% U)
+    phi <- phi0 - MASS::ginv(t(S) %*% S) %*% (t(S) %*% U)
     
     dif <- sum((phi - phi0) ^ 2)
     
@@ -62,13 +62,13 @@ nmar_chang_kott <- function(Y, X, Z, d, totals, link = "logit", control) {
     }
   }
   
-  K <- BM1 %*% solve(t(S) %*% S)
+  K <- BM1 %*% MASS::ginv(t(S) %*% S)
   
-  eta <- d * (Y - esty) / rho - matrix(data = SM %*% S %*% t(K), ncol = 3, nrow = n, byrow = T)
+  eta <- d * (Y - esty) / rho - matrix(data = SM %*% S %*% t(K), ncol = ncol(Y), nrow = n, byrow = T)
   tau <- -sum(d / rho)
   
   varesty <- n * var(eta) / tau ^ 2
-  varphi <- n * diag(solve(t(S) %*% S) %*% t(S) %*% var(SM) %*% S %*% solve(t(S) %*% S))
+  varphi <- n * diag(MASS::ginv(t(S) %*% S) %*% t(S) %*% var(SM) %*% S %*% MASS::ginv(t(S) %*% S))
   
   return(list(phi=phi,
               phi_se = sqrt(varphi),

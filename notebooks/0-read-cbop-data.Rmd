@@ -39,7 +39,7 @@ cbop2018 %>%
          kod_syst_wynagr != "",
          kod_rodz_zatrud != "Spółdzielcza umowa o pracę",
          kod_zmianowosci != "nie dotyczy")  %>%
-  #count(kod_rodz_zatrud, wt = liczba_miejsc_og)
+  #dplyr::count(kod_rodz_zatrud, wt = liczba_miejsc_og)
   mutate(sys_wynag = case_when(kod_syst_wynagr == "Czasowy ze stawką miesięczną" ~ "Monthly payment",
                                kod_syst_wynagr %in% c("Ryczałtowy", 
                                                       "Czasowy ze stawką godzinową", 
@@ -60,7 +60,7 @@ cbop2018 %>%
          kod_zmianowosci, zmiany,liczba_godz_tyg, kod_kategorii_oferty_pracy, przez_prac,
          przyczyna_arch_dziedzinowa,gmina_do_statystyk,prac_nazwa, prac_kod_pkd2007,prac_nip,prac_regon,dzial) %>%
   left_join(read_excel("~/git/zbiory/gus-popyt/wolne.xlsx") %>% 
-              count(dzial = DZIAL, pkd = SEKC_PKD) %>% 
+              dplyr::count(dzial = DZIAL, pkd = SEKC_PKD) %>% 
               select(-n)) %>%
   mutate(pkd = ifelse(dzial == "94", "S", pkd),
          nace = ifelse(pkd %in% c("A", "B", "D", "E", "K", "L", "P", "R", "S"), "other", pkd)) %>%
@@ -73,14 +73,14 @@ saveRDS(object = cbop_2018_1, file = "../data/df-cbop-2018Q1.rds")
 
 ```{r}
 cbop_2018_1 %>%
-  count(zawod1, kod_rodz_zatrud, wt = as.numeric(liczba_godz_tyg)) %>%
+  dplyr::count(zawod1, kod_rodz_zatrud, wt = as.numeric(liczba_godz_tyg)) %>%
   group_by(zawod1) %>%
   mutate(p  = n/sum(n)*100) %>%
   ggplot(data = ., aes(x = zawod1, y = p, fill = kod_rodz_zatrud)) +
   geom_col()
 
 cbop_2018_1 %>%
-  count(przez_prac, kod_rodz_zatrud, wt = as.numeric(liczba_godz_tyg)) %>%
+  dplyr::count(przez_prac, kod_rodz_zatrud, wt = as.numeric(liczba_godz_tyg)) %>%
   group_by(przez_prac) %>%
   mutate(p  = n/sum(n)*100) %>%
   ggplot(data = ., aes(x = przez_prac, y = p, fill = kod_rodz_zatrud)) +

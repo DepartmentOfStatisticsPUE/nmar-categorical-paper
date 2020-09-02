@@ -38,7 +38,6 @@ prop.table(table(nonpar_df$y))
 
 # Simulation study -- cbop
 
-### Chang-Kott / Kott-Chang model
 
 ```{r}
 cbop_sim <- readRDS(file = "../data/df-sim-cbop.rds")
@@ -46,52 +45,69 @@ cbop_sim <- readRDS(file = "../data/df-sim-cbop.rds")
 sim_res <- list()
 sim_phi <- list()
 sim_naive <- list()
+sim_cal <- list()
+sim_nmar_cal <- list()
 
 for (i in 1:500) {
   set.seed(i)
-  flag <- rbinom(n = NROW(cbop_sim), size = 1, prob = cbop_sim$probs_nmar_13) 
+  flag <- rbinom(n = NROW(cbop_sim), size = 1, prob = cbop_sim$probs_nmar_2) 
   cbop_sim$d <- flag
   totals <- colSums(model.matrix(~ zawod1, data = cbop_sim))
+  cbop_sim_d <- subset(cbop_sim, d == 1)
 
-  Y <- model.matrix(~ y-1, data = subset(cbop_sim, d==1))
-  X <- model.matrix(~ y, data = subset(cbop_sim, d==1))
-  Z <- model.matrix(~ zawod1, data = subset(cbop_sim, d==1))
+  Y <- model.matrix(~ y-1, data = cbop_sim_d)
+  X <- model.matrix(~ y, data = cbop_sim_d)
+  Z <- model.matrix(~ zawod1, data = cbop_sim_d)
   phi <- rep(0, ncol(X))
   d <- rep(nrow(cbop_sim)/nrow(X), nrow(Z))
+  cbop_sim_d$d <- d
 
+  ### Chang-Kott / Kott-Chang model
   res <- nmar_chang_kott(Y=Y, X = X, Z=Z, d = d, totals = totals, control = list(eps=0.00001, maxiter = 2000))
   sim_res[[i]] <- res$y_hat
   sim_phi[[i]] <- res$phi
+  
+  ### naive 
   sim_naive[[i]] <- prop.table(table(cbop_sim$y[cbop_sim$d==1]))
+  
+  ## calibrarion 
+  Xs <- xtabs(~ zawod1, data = cbop_sim)
+  y_des <- svydesign(ids =~ 1, weights = ~d, data = subset(cbop_sim, d == 1))
+  y_des_cal <- calibrate(y_des, formula = list(~  zawod1), population = list(Xs))
+  sim_cal[[i]] <- prop.table(svytable(~y, y_des_cal))
+  
+  ### calibration after nmar 
+  
+  cbop_sim_d$weight <- cbop_sim_d$d/res$rho
+  y_des_rho <- svydesign(ids =~ 1, weight = ~weight, data = cbop_sim_d)
+  y_des_rho_cal <- calibrate(y_des_rho, formula = list(~  zawod1), population = list(Xs))
+  sim_nmar_cal[[i]] <- prop.table(svytable(~y, y_des_rho_cal))
 }
- 
+
+
+### processing of results
 nmar_bias <- colMeans(do.call('rbind', sim_res)) - prop.table(table(cbop_sim$y))
+nmar_cal_bias <- colMeans(do.call('rbind', sim_nmar_cal)) - prop.table(table(cbop_sim$y))
 naive_bias <- colMeans(do.call('rbind', sim_naive)) - prop.table(table(cbop_sim$y))
+cal_bias <- colMeans(do.call('rbind', sim_cal)) - prop.table(table(cbop_sim$y))
+
 nmar_phi <- t(do.call('cbind',sim_phi))
 boxplot(nmar_phi)
 
 nmar_vars <- colVars(do.call('rbind', sim_res))
+nmar_cal_vars <- colVars(do.call('rbind', sim_nmar_cal))
 naive_vars <- colVars(do.call('rbind', sim_naive))
+cal_vars <- colVars(do.call('rbind', sim_cal))
 
 nmar_mse <- nmar_bias^2 + nmar_vars
+nmar_cal_mse <- nmar_cal_bias^2 + nmar_cal_vars
 naive_mse <- naive_bias^2 + naive_vars
+cal_mse <- cal_bias^2 + cal_vars
 
-sqrt(nmar_mse)
-sqrt(naive_mse)
-sqrt(nmar_vars)
-res$y_se
+res_mse <- rbind(sqrt(nmar_mse),sqrt(nmar_cal_mse),sqrt(naive_mse),sqrt(cal_mse))
+rownames(res_mse) <- c("nmar", "nmar_cal", "naive", "cal")
+colnames(res_mse) <- c("y1", "y2", "y3")
 
-nmar_bias
-naive_bias
-
-boxplot(cbind(do.call('rbind', sim_res), do.call('rbind', sim_naive)))
-
+res_mse
 ```
 
-```{r}
-Xs <- xtabs(~ zawod1, data = cbop_sim)
-y_des <- svydesign(ids =~ 1, data = subset(cbop_sim, d == 1))
-y_des_cal <- calibrate(y_des, formula = list(~  zawod1), population = list(Xs))
-prop.table(svytable(~y, y_des)) - prop.table(table(cbop_sim$y))
-prop.table(svytable(~y, y_des_cal)) - prop.table(table(cbop_sim$y))
-```
