@@ -6,12 +6,14 @@ output: html_notebook
 ```{r}
 library(tidyverse)
 library(survey)
-library(maxLik)
-library(rootSolve)
 ```
 
 ```{r}
-cbop <- readRDS(file = "../data/df-cbop-2018Q1.rds")
+source("../codes/1-nmar-chang-kott.R")
+```
+
+```{r}
+cbop <- readRDS(file = "../data/df-cbop-2018Q1.rds")  %>% filter(przez_prac)
 totals <- readRDS(file = "../data/df-demand-totals.rds")
 cbop$weight <- cbop$liczba_miejsc_og*sum(totals$jvs) / sum(cbop$liczba_miejsc_og)
 sum(cbop$weight)
@@ -23,24 +25,17 @@ Calibration
 ```{r}
 cbop$occup <- cbop$zawod1
 cbop_svy <- svydesign(id =~1, weights = ~weight, 
-                      #data = cbop)
-                      data = subset(cbop, str_detect(kod_kategorii_oferty_pracy,"zgłoszona przez pracodawcę")))
-```
+                      data = cbop)
 
-```{r}
 totals_nace <- xtabs(jvs ~ nace, totals)
 totals_occup <- xtabs(jvs ~ occup, totals)
 totals_nace_occup <- xtabs(jvs ~ nace + occup, totals)
-```
 
-```{r}
 cbop_svy_cal_occup <- calibrate(design = cbop_svy, formula = list(~ occup), population = list(totals_occup))
 cbop_svy_cal_nace <- calibrate(design = cbop_svy, formula = list(~ nace), population = list(totals_nace))
 cbop_svy_cal_nace_occup <- calibrate(design = cbop_svy, formula = list(~ nace + occup), 
                                      population = list(totals_nace_occup))
-```
 
-```{r}
 prop.table(svytable(~ zmiany, cbop_svy))
 prop.table(svytable(~ zmiany, cbop_svy_cal_occup))
 prop.table(svytable(~ zmiany, cbop_svy_cal_nace))
@@ -53,4 +48,25 @@ prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_nace_occup))
 ```
 
 
+NMAR
+
+```{r}
+Y <- model.matrix(~ kod_rodz_zatrud-1, data = cbop)
+X <- model.matrix(~ kod_rodz_zatrud, data = cbop)
+Z <- model.matrix(~ occup-1, data = cbop)
+phi <- rep(0, ncol(X))
+totals_occup
+d <- cbop$weight
+### Chang-Kott / Kott-Chang model
+res <- nmar_chang_kott(Y=Y, X = X, Z=Z, d = d, totals = totals_occup, control = list(eps=0.00001, maxiter = 2000))
+
+cbop$new_weight <- cbop$weight/res$rho
+
+cbop_svy_nmar <- svydesign(id =~1, weights = ~new_weight,  data = cbop)
+cbop_svy_nmar_cal <- calibrate(design = cbop_svy_nmar, formula = list(~ occup), population = list(totals_occup))
+
+prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_nmar_cal))
+prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_nmar))
+
+```
 
