@@ -17,11 +17,86 @@ nonpar_df$x1 <- as.factor(nonpar_df$x1)
 nonpar_df$x2 <- as.factor(nonpar_df$x2)
 ## eta <- 1 +  1(df$y == 2)
 set.seed(123)
-flag <- rbinom(n = NROW(nonpar_df), size = 1, prob = nonpar_df$probs_mar) 
-nonpar_df$d <- flag
-head(nonpar_df)
-prop.table(table(nonpar_df$y))
-prop.table(table(nonpar_df$y[nonpar_df$d==1]))
+
+
+sim_res_np <- list()
+sim_phi_np <- list()
+sim_naive_np<- list()
+sim_cal_np <- list()
+sim_nmar_cal_np <- list()
+
+for (i in 1:100) {
+  cat(i, "\n")
+  set.seed(i)
+  flag <- rbinom(n = NROW(nonpar_df), size = 1, prob = nonpar_df$probs_mar) 
+  nonpar_df$d <- flag
+  #totals <- colSums(model.matrix(~ -1 + zawod1, data = cbop_sim))
+  #cbop_sim_d <- subset(cbop_sim, d == 1)
+
+  Y <- model.matrix(~ y-1, data = nonpar_df)
+  X <- model.matrix(~ y, data = nonpar_df)
+  Z <- model.matrix(~ -1+x1+x2, data = nonpar_df)
+  phi <- rep(0, ncol(X))
+  d <- nonpar_df$d
+  #d <- rep(nrow(cbop_sim)/nrow(X), nrow(Z))
+  #d <- rep(1, nrow(Z))
+  #cbop_sim_d$d <- d
+
+  ### Chang-Kott / Kott-Chang model
+  res <- nmar_chang_kott(Y=Y, X = X, Z=Z, d = d, control = list(eps=0.00001, maxiter = 2000))
+  sim_res_np[[i]] <- res$y_hat
+  sim_phi_np[[i]] <- res$phi
+  
+  ### naive 
+  sim_naive_np[[i]] <- prop.table(table(nonpar_df$y[nonpar_df$d==1]))
+  
+  ## calibrarion 
+  Xs <- xtabs(~ x1+x2, data = nonpar_df)
+  y_des <- svydesign(ids =~ 1, data = subset(nonpar_df, d == 1))
+  y_des_cal <- calibrate(y_des, formula = list(~  x1+x2), population = list(Xs))
+  sim_cal_np[[i]] <- prop.table(svytable(~y, y_des_cal))
+  
+  ### calibration after nmar 
+  
+  nonpar_df$weight <- nonpar_df$d/res$rho
+  y_des_rho <- svydesign(ids =~ 1, weight = ~weight, data = subset(nonpar_df, d ==1))
+  y_des_rho_cal <- calibrate(y_des_rho, formula = list(~  x1+x2), population = list(Xs))
+  sim_nmar_cal_np[[i]] <- prop.table(svytable(~y, y_des_rho_cal))
+}
+
+
+### processing of results
+nmar_bias <- colMeans(do.call('rbind', sim_res_np)) - prop.table(table(nonpar_df$y))
+nmar_cal_bias <- colMeans(do.call('rbind', sim_nmar_cal_np)) - prop.table(table(nonpar_df$y))
+naive_bias <- colMeans(do.call('rbind', sim_naive_np)) - prop.table(table(nonpar_df$y))
+cal_bias <- colMeans(do.call('rbind', sim_cal_np)) - prop.table(table(nonpar_df$y))
+
+nmar_phi <- t(do.call('cbind',sim_phi_np))
+boxplot(nmar_phi)
+
+nmar_vars <- colVars(do.call('rbind', sim_res_np))
+nmar_cal_vars <- colVars(do.call('rbind', sim_nmar_cal_np))
+naive_vars <- colVars(do.call('rbind', sim_naive_np))
+cal_vars <- colVars(do.call('rbind', sim_cal_np))
+
+nmar_mse <- nmar_bias^2 + nmar_vars
+nmar_cal_mse <- nmar_cal_bias^2 + nmar_cal_vars
+naive_mse <- naive_bias^2 + naive_vars
+cal_mse <- cal_bias^2 + cal_vars
+
+res_mse <- rbind(sqrt(nmar_mse),sqrt(nmar_cal_mse),sqrt(naive_mse),sqrt(cal_mse))
+rownames(res_mse) <- c("nmar", "nmar_cal", "naive", "cal")
+colnames(res_mse) <- c("y1", "y2", "y3")
+
+res_mse
+
+res_bias <- rbind(nmar_bias,nmar_cal_bias,naive_bias,cal_bias)
+rownames(res_bias) <- c("nmar", "nmar_cal", "naive", "cal")
+colnames(res_bias) <- c("y1", "y2", "y3")
+res_bias
+
+
+
 ```
 
 ### Calibration
@@ -49,21 +124,24 @@ sim_cal <- list()
 sim_nmar_cal <- list()
 
 for (i in 1:500) {
+  cat(i, "\n")
   set.seed(i)
-  flag <- rbinom(n = NROW(cbop_sim), size = 1, prob = cbop_sim$probs_nmar_2) 
+  flag <- rbinom(n = NROW(cbop_sim), size = 1, prob = cbop_sim$probs_nmar_13) 
   cbop_sim$d <- flag
-  totals <- colSums(model.matrix(~ zawod1, data = cbop_sim))
-  cbop_sim_d <- subset(cbop_sim, d == 1)
+  #totals <- colSums(model.matrix(~ -1 + zawod1, data = cbop_sim))
+  #cbop_sim_d <- subset(cbop_sim, d == 1)
 
-  Y <- model.matrix(~ y-1, data = cbop_sim_d)
-  X <- model.matrix(~ y, data = cbop_sim_d)
-  Z <- model.matrix(~ zawod1, data = cbop_sim_d)
+  Y <- model.matrix(~ y-1, data = cbop_sim)
+  X <- model.matrix(~ y, data = cbop_sim)
+  Z <- model.matrix(~ -1+ zawod1, data = cbop_sim)
   phi <- rep(0, ncol(X))
-  d <- rep(nrow(cbop_sim)/nrow(X), nrow(Z))
-  cbop_sim_d$d <- d
+  d <- cbop_sim$d
+  #d <- rep(nrow(cbop_sim)/nrow(X), nrow(Z))
+  #d <- rep(1, nrow(Z))
+  #cbop_sim_d$d <- d
 
   ### Chang-Kott / Kott-Chang model
-  res <- nmar_chang_kott(Y=Y, X = X, Z=Z, d = d, totals = totals, control = list(eps=0.00001, maxiter = 2000))
+  res <- nmar_chang_kott(Y=Y, X = X, Z=Z, d = d, control = list(eps=0.00001, maxiter = 2000))
   sim_res[[i]] <- res$y_hat
   sim_phi[[i]] <- res$phi
   
@@ -78,8 +156,8 @@ for (i in 1:500) {
   
   ### calibration after nmar 
   
-  cbop_sim_d$weight <- cbop_sim_d$d/res$rho
-  y_des_rho <- svydesign(ids =~ 1, weight = ~weight, data = cbop_sim_d)
+  cbop_sim$weight <- cbop_sim$d/res$rho
+  y_des_rho <- svydesign(ids =~ 1, weight = ~weight, data = cbop_sim)
   y_des_rho_cal <- calibrate(y_des_rho, formula = list(~  zawod1), population = list(Xs))
   sim_nmar_cal[[i]] <- prop.table(svytable(~y, y_des_rho_cal))
 }
@@ -109,5 +187,11 @@ rownames(res_mse) <- c("nmar", "nmar_cal", "naive", "cal")
 colnames(res_mse) <- c("y1", "y2", "y3")
 
 res_mse
+
+res_bias <- rbind(nmar_bias,nmar_cal_bias,naive_bias,cal_bias)
+rownames(res_bias) <- c("nmar", "nmar_cal", "naive", "cal")
+colnames(res_bias) <- c("y1", "y2", "y3")
+res_bias
+
 ```
 

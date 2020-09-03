@@ -5,7 +5,7 @@
 ## link -- link function
 ## controls --- currently only eps and maxiter
 
-nmar_chang_kott <- function(Y, X, Z, d, totals, link = "logit", control) {
+nmar_chang_kott <- function(Y, X, Z, d, link = "logit", control) {
   
   
   if (link != "logit") {
@@ -22,7 +22,9 @@ nmar_chang_kott <- function(Y, X, Z, d, totals, link = "logit", control) {
     k  <- k+1
     
     rho <- as.numeric(exp(X %*% phi) / (1 + exp(X %*% phi))) 
-    U <- colSums( d*(1/ rho - 1)*Z) - totals
+    #U <- colSums( d*(1/ rho - 1)*Z) - totals
+    U <- colSums( (d/rho-1) * Z)
+    #U <- colSums( d*(Z/ rho - 1)) - totals
     S <- matrix(0, ncol(Z), ncol(X))
     
     for (i in 1:ncol(Z)) {
@@ -46,7 +48,9 @@ nmar_chang_kott <- function(Y, X, Z, d, totals, link = "logit", control) {
   rho <- as.numeric(exp(X %*% phi) / (1 + exp(X %*% phi))) 
   esty <- colSums(d * Y / rho) / sum(d / rho)
   
-  SM <- d*(1/ rho - 1)*Z
+  #SM <- d*(1/ rho - 1)*Z
+  SM <- (d/rho-1) * Z
+  #SM <- d*(1/ rho*Z - 1)
   
   S <- matrix(0, ncol(Z), ncol(X))
   for (i in 1:nrow(S)) {

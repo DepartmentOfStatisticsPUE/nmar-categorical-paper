@@ -51,22 +51,44 @@ prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_nace_occup))
 NMAR
 
 ```{r}
-Y <- model.matrix(~ kod_rodz_zatrud-1, data = cbop)
-X <- model.matrix(~ kod_rodz_zatrud, data = cbop)
-Z <- model.matrix(~ occup-1, data = cbop)
-phi <- rep(0, ncol(X))
-totals_occup
-d <- cbop$weight
+## observed data
+cbop_long <- cbop[rep(1:nrow(cbop), times = cbop$liczba_miejsc_og),]
+cbop_long$occup <- cbop_long$zawod1
+Y_obs <- model.matrix(~ zmiany-1, data = cbop_long)
+X_obs <- model.matrix(~ zmiany, data = cbop_long)
+Z_obs <- model.matrix(~ occup-1, data = cbop_long)
+d_obs <- rep(1, nrow(cbop_long))
+## nonobs
+occup_noobs <- totals_occup-table(cbop_long$occup)
+occup_noobs_df <- as.data.frame(occup_noobs, stringsAsFactors = F)
+Y_nobs <- matrix(data = numeric(ncol(Y_obs)), ncol = ncol(Y_obs), nrow = sum(occup_noobs), byrow = T)
+X_nobs <- matrix(data = numeric(ncol(Y_obs)), ncol = ncol(Y_obs), nrow = sum(occup_noobs), byrow = T)
+Z_nobs <- model.matrix(~ occup-1, data = occup_noobs_df)
+Z_nobs <- Z_nobs[rep(x = 1:nrow(occup_noobs_df), times = occup_noobs_df$Freq),]
+d_nobs <- rep(0, sum(occup_noobs_df$Freq))
+
+## together
+Y_all <- rbind(Y_obs, Y_nobs)
+X_all <- rbind(X_obs, X_nobs)
+Z_all <- rbind(Z_obs, Z_nobs)
+d_all <- c(d_obs, d_nobs)
+
+
 ### Chang-Kott / Kott-Chang model
-res <- nmar_chang_kott(Y=Y, X = X, Z=Z, d = d, totals = totals_occup, control = list(eps=0.00001, maxiter = 2000))
+res <- nmar_chang_kott(Y=Y_all, X = X_all, Z=Z_all, d = d_all, control = list(eps=0.00001, maxiter = 2000))
 
-cbop$new_weight <- cbop$weight/res$rho
+cbop_long$new_weight <- 1/(res$rho[d_all==1])
 
-cbop_svy_nmar <- svydesign(id =~1, weights = ~new_weight,  data = cbop)
+cbop_svy_nmar <- svydesign(id =~1, weights = ~new_weight,  data = cbop_long)
 cbop_svy_nmar_cal <- calibrate(design = cbop_svy_nmar, formula = list(~ occup), population = list(totals_occup))
 
-prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_nmar_cal))
-prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_nmar))
+cbop_svy_mar <- svydesign(id =~1, weights = ~1,  data = cbop_long)
+cbop_svy_mar_cal <- calibrate(design = cbop_svy_mar, formula = list(~ occup), population = list(totals_occup))
+
+prop.table(svytable(~ zmiany, cbop_svy_nmar_cal))
+prop.table(svytable(~ zmiany, cbop_svy_nmar))
+prop.table(svytable(~ zmiany, cbop_svy_mar))
+prop.table(svytable(~ zmiany, cbop_svy_mar_cal))
 
 ```
 
