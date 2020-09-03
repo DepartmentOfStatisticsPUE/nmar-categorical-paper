@@ -13,7 +13,7 @@ source("../codes/1-nmar-chang-kott.R")
 ```
 
 ```{r}
-cbop <- readRDS(file = "../data/df-cbop-2018Q1.rds")  %>% filter(przez_prac)
+cbop <- readRDS(file = "../data/df-cbop-2018Q1.rds")
 totals <- readRDS(file = "../data/df-demand-totals.rds")
 cbop$weight <- cbop$liczba_miejsc_og*sum(totals$jvs) / sum(cbop$liczba_miejsc_og)
 sum(cbop$weight)

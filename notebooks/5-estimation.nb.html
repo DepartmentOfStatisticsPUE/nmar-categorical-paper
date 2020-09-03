@@ -1766,8 +1766,8 @@ library(survey)</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2JvcCA8LSByZWFkUkRTKGZpbGUgPSBcIi4uL2RhdGEvZGYtY2JvcC0yMDE4UTEucmRzXCIpICAlPiUgZmlsdGVyKHByemV6X3ByYWMpXG50b3RhbHMgPC0gcmVhZFJEUyhmaWxlID0gXCIuLi9kYXRhL2RmLWRlbWFuZC10b3RhbHMucmRzXCIpXG5jYm9wJHdlaWdodCA8LSBjYm9wJGxpY3piYV9taWVqc2Nfb2cqc3VtKHRvdGFscyRqdnMpIC8gc3VtKGNib3AkbGljemJhX21pZWpzY19vZylcbnN1bShjYm9wJHdlaWdodClcbmBgYCJ9 -->
-<pre class="r"><code>cbop &lt;- readRDS(file = &quot;../data/df-cbop-2018Q1.rds&quot;)  %&gt;% filter(przez_prac)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2JvcCA8LSByZWFkUkRTKGZpbGUgPSBcIi4uL2RhdGEvZGYtY2JvcC0yMDE4UTEucmRzXCIpXG50b3RhbHMgPC0gcmVhZFJEUyhmaWxlID0gXCIuLi9kYXRhL2RmLWRlbWFuZC10b3RhbHMucmRzXCIpXG5jYm9wJHdlaWdodCA8LSBjYm9wJGxpY3piYV9taWVqc2Nfb2cqc3VtKHRvdGFscyRqdnMpIC8gc3VtKGNib3AkbGljemJhX21pZWpzY19vZylcbnN1bShjYm9wJHdlaWdodClcbmBgYCJ9 -->
+<pre class="r"><code>cbop &lt;- readRDS(file = &quot;../data/df-cbop-2018Q1.rds&quot;)
 totals &lt;- readRDS(file = &quot;../data/df-demand-totals.rds&quot;)
 cbop$weight &lt;- cbop$liczba_miejsc_og*sum(totals$jvs) / sum(cbop$liczba_miejsc_og)
 sum(cbop$weight)</code></pre>
@@ -1802,73 +1802,73 @@ cbop_svy_cal_nace_occup &lt;- calibrate(design = cbop_svy, formula = list(~ nace
 
 prop.table(svytable(~ zmiany, cbop_svy))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gICAwLjIyODY2MDUgICAgMC4xMDU1ODgwICAgIDAuNTIwNTgxNiAgICAwLjE0NTE2OTggXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gIDAuMjE5MjU4OTQgICAwLjA5NTcwOTQ2ICAgMC41MjIyMzg1NyAgIDAuMTYyNzkzMDMgXG4ifQ== -->
 <pre><code>zmiany
  dwie zmiany         inne jedna zmiana  trzy zmiany 
-   0.2286605    0.1055880    0.5205816    0.1451698 </code></pre>
+  0.21925894   0.09570946   0.52223857   0.16279303 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnlfY2FsX29jY3VwKSlcbmBgYCJ9 -->
 <pre class="r"><code>prop.table(svytable(~ zmiany, cbop_svy_cal_occup))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gICAwLjIyMTA4MjcgICAgMC4xMDE1NDQ3ICAgIDAuNTQ3ODMxOCAgICAwLjEyOTU0MDggXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gIDAuMjA4Mjk4MjIgICAwLjA5MDM1OTU5ICAgMC41NTY5MzkzMyAgIDAuMTQ0NDAyODYgXG4ifQ== -->
 <pre><code>zmiany
  dwie zmiany         inne jedna zmiana  trzy zmiany 
-   0.2210827    0.1015447    0.5478318    0.1295408 </code></pre>
+  0.20829822   0.09035959   0.55693933   0.14440286 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnlfY2FsX25hY2UpKVxuYGBgIn0= -->
 <pre class="r"><code>prop.table(svytable(~ zmiany, cbop_svy_cal_nace))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gICAwLjIyOTIwNDAgICAgMC4xMDU1OTEyICAgIDAuNTQ4NDgyMyAgICAwLjExNjcyMjUgXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gIDAuMjIwMTIxNDUgICAwLjA5NDM2MTA5ICAgMC41NjUxOTU1OCAgIDAuMTIwMzIxODggXG4ifQ== -->
 <pre><code>zmiany
  dwie zmiany         inne jedna zmiana  trzy zmiany 
-   0.2292040    0.1055912    0.5484823    0.1167225 </code></pre>
+  0.22012145   0.09436109   0.56519558   0.12032188 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnlfY2FsX25hY2Vfb2NjdXApKVxuYGBgIn0= -->
 <pre class="r"><code>prop.table(svytable(~ zmiany, cbop_svy_cal_nace_occup))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gICAwLjIxNjQ5MDEgICAgMC4xMDY3Nzc1ICAgIDAuNTY5OTg0NCAgICAwLjEwNjc0NzkgXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gICAwLjIwNjc1NzkgICAgMC4wOTk5ODc0ICAgIDAuNTg0NjA2MyAgICAwLjEwODY0ODQgXG4ifQ== -->
 <pre><code>zmiany
  dwie zmiany         inne jedna zmiana  trzy zmiany 
-   0.2164901    0.1067775    0.5699844    0.1067479 </code></pre>
+   0.2067579    0.0999874    0.5846063    0.1086484 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IGtvZF9yb2R6X3phdHJ1ZCwgY2JvcF9zdnkpKVxuYGBgIn0= -->
 <pre class="r"><code>prop.table(svytable(~ kod_rodz_zatrud, cbop_svy))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoia29kX3JvZHpfemF0cnVkXG5VbW93YSBvIHByYWPEmSBuYSBjemFzIG5pZW9rcmXFm2xvbnkgICAgVW1vd2EgbyBwcmFjxJkgbmEgY3phcyBva3JlxZtsb255ICAgICAgVW1vd2EgbyBwcmFjxJkgbmEgb2tyZXMgcHLDs2JueSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwLjEyMDUwMjYgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNDk0Nzk0MiAgICAgICAgICAgICAgICAgICAgICAgICAgMC4zODQ3MDMyIFxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoia29kX3JvZHpfemF0cnVkXG5VbW93YSBvIHByYWPEmSBuYSBjemFzIG5pZW9rcmXFm2xvbnkgICAgVW1vd2EgbyBwcmFjxJkgbmEgY3phcyBva3JlxZtsb255ICAgICAgVW1vd2EgbyBwcmFjxJkgbmEgb2tyZXMgcHLDs2JueSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwLjEwMTU2MTcgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNTUyNTcwMCAgICAgICAgICAgICAgICAgICAgICAgICAgMC4zNDU4NjgzIFxuIn0= -->
 <pre><code>kod_rodz_zatrud
 Umowa o pracę na czas nieokreślony    Umowa o pracę na czas określony      Umowa o pracę na okres próbny 
-                         0.1205026                          0.4947942                          0.3847032 </code></pre>
+                         0.1015617                          0.5525700                          0.3458683 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IGtvZF9yb2R6X3phdHJ1ZCwgY2JvcF9zdnlfY2FsX29jY3VwKSlcbmBgYCJ9 -->
 <pre class="r"><code>prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_occup))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoia29kX3JvZHpfemF0cnVkXG5VbW93YSBvIHByYWPEmSBuYSBjemFzIG5pZW9rcmXFm2xvbnkgICAgVW1vd2EgbyBwcmFjxJkgbmEgY3phcyBva3JlxZtsb255ICAgICAgVW1vd2EgbyBwcmFjxJkgbmEgb2tyZXMgcHLDs2JueSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwLjEyNzYyMzcgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNDg5NDg2OCAgICAgICAgICAgICAgICAgICAgICAgICAgMC4zODI4ODk1IFxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoia29kX3JvZHpfemF0cnVkXG5VbW93YSBvIHByYWPEmSBuYSBjemFzIG5pZW9rcmXFm2xvbnkgICAgVW1vd2EgbyBwcmFjxJkgbmEgY3phcyBva3JlxZtsb255ICAgICAgVW1vd2EgbyBwcmFjxJkgbmEgb2tyZXMgcHLDs2JueSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwLjEwODQ0MDUgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNTQ3NjgyNyAgICAgICAgICAgICAgICAgICAgICAgICAgMC4zNDM4NzY4IFxuIn0= -->
 <pre><code>kod_rodz_zatrud
 Umowa o pracę na czas nieokreślony    Umowa o pracę na czas określony      Umowa o pracę na okres próbny 
-                         0.1276237                          0.4894868                          0.3828895 </code></pre>
+                         0.1084405                          0.5476827                          0.3438768 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IGtvZF9yb2R6X3phdHJ1ZCwgY2JvcF9zdnlfY2FsX25hY2UpKVxuYGBgIn0= -->
 <pre class="r"><code>prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_nace))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoia29kX3JvZHpfemF0cnVkXG5VbW93YSBvIHByYWPEmSBuYSBjemFzIG5pZW9rcmXFm2xvbnkgICAgVW1vd2EgbyBwcmFjxJkgbmEgY3phcyBva3JlxZtsb255ICAgICAgVW1vd2EgbyBwcmFjxJkgbmEgb2tyZXMgcHLDs2JueSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwLjEzNDc0MjYgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNDcyOTU0OCAgICAgICAgICAgICAgICAgICAgICAgICAgMC4zOTIzMDI1IFxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoia29kX3JvZHpfemF0cnVkXG5VbW93YSBvIHByYWPEmSBuYSBjemFzIG5pZW9rcmXFm2xvbnkgICAgVW1vd2EgbyBwcmFjxJkgbmEgY3phcyBva3JlxZtsb255ICAgICAgVW1vd2EgbyBwcmFjxJkgbmEgb2tyZXMgcHLDs2JueSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwLjExMzE5MzIgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNTMyOTI4NCAgICAgICAgICAgICAgICAgICAgICAgICAgMC4zNTM4NzgzIFxuIn0= -->
 <pre><code>kod_rodz_zatrud
 Umowa o pracę na czas nieokreślony    Umowa o pracę na czas określony      Umowa o pracę na okres próbny 
-                         0.1347426                          0.4729548                          0.3923025 </code></pre>
+                         0.1131932                          0.5329284                          0.3538783 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IGtvZF9yb2R6X3phdHJ1ZCwgY2JvcF9zdnlfY2FsX25hY2Vfb2NjdXApKVxuYGBgIn0= -->
 <pre class="r"><code>prop.table(svytable(~ kod_rodz_zatrud, cbop_svy_cal_nace_occup))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoia29kX3JvZHpfemF0cnVkXG5VbW93YSBvIHByYWPEmSBuYSBjemFzIG5pZW9rcmXFm2xvbnkgICAgVW1vd2EgbyBwcmFjxJkgbmEgY3phcyBva3JlxZtsb255ICAgICAgVW1vd2EgbyBwcmFjxJkgbmEgb2tyZXMgcHLDs2JueSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwLjE0ODQ0MTIgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNDc2NTUzMCAgICAgICAgICAgICAgICAgICAgICAgICAgMC4zNzUwMDU4IFxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoia29kX3JvZHpfemF0cnVkXG5VbW93YSBvIHByYWPEmSBuYSBjemFzIG5pZW9rcmXFm2xvbnkgICAgVW1vd2EgbyBwcmFjxJkgbmEgY3phcyBva3JlxZtsb255ICAgICAgVW1vd2EgbyBwcmFjxJkgbmEgb2tyZXMgcHLDs2JueSBcbiAgICAgICAgICAgICAgICAgICAgICAgICAwLjEyNzk4MDYgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNTI3NDg3MyAgICAgICAgICAgICAgICAgICAgICAgICAgMC4zNDQ1MzIxIFxuIn0= -->
 <pre><code>kod_rodz_zatrud
 Umowa o pracę na czas nieokreślony    Umowa o pracę na czas określony      Umowa o pracę na okres próbny 
-                         0.1484412                          0.4765530                          0.3750058 </code></pre>
+                         0.1279806                          0.5274873                          0.3445321 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>NMAR</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgb2JzZXJ2ZWQgZGF0YVxuY2JvcF9sb25nIDwtIGNib3BbcmVwKDE6bnJvdyhjYm9wKSwgdGltZXMgPSBjYm9wJGxpY3piYV9taWVqc2Nfb2cpLF1cbmNib3BfbG9uZyRvY2N1cCA8LSBjYm9wX2xvbmckemF3b2QxXG5ZX29icyA8LSBtb2RlbC5tYXRyaXgofiB6bWlhbnktMSwgZGF0YSA9IGNib3BfbG9uZylcblhfb2JzIDwtIG1vZGVsLm1hdHJpeCh+IHptaWFueSwgZGF0YSA9IGNib3BfbG9uZylcblpfb2JzIDwtIG1vZGVsLm1hdHJpeCh+IG9jY3VwLTEsIGRhdGEgPSBjYm9wX2xvbmcpXG5kX29icyA8LSByZXAoMSwgbnJvdyhjYm9wX2xvbmcpKVxuIyMgbm9ub2JzXG5vY2N1cF9ub29icyA8LSB0b3RhbHNfb2NjdXAtdGFibGUoY2JvcF9sb25nJG9jY3VwKVxub2NjdXBfbm9vYnNfZGYgPC0gYXMuZGF0YS5mcmFtZShvY2N1cF9ub29icywgc3RyaW5nc0FzRmFjdG9ycyA9IEYpXG5ZX25vYnMgPC0gbWF0cml4KGRhdGEgPSBudW1lcmljKG5jb2woWV9vYnMpKSwgbmNvbCA9IG5jb2woWV9vYnMpLCBucm93ID0gc3VtKG9jY3VwX25vb2JzKSwgYnlyb3cgPSBUKVxuWF9ub2JzIDwtIG1hdHJpeChkYXRhID0gbnVtZXJpYyhuY29sKFlfb2JzKSksIG5jb2wgPSBuY29sKFlfb2JzKSwgbnJvdyA9IHN1bShvY2N1cF9ub29icyksIGJ5cm93ID0gVClcblpfbm9icyA8LSBtb2RlbC5tYXRyaXgofiBuYWNlLTEsIGRhdGEgPSBvY2N1cF9ub29ic19kZilcblxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgb2JzZXJ2ZWQgZGF0YVxuY2JvcF9sb25nIDwtIGNib3BbcmVwKDE6bnJvdyhjYm9wKSwgdGltZXMgPSBjYm9wJGxpY3piYV9taWVqc2Nfb2cpLF1cbmNib3BfbG9uZyRvY2N1cCA8LSBjYm9wX2xvbmckemF3b2QxXG5ZX29icyA8LSBtb2RlbC5tYXRyaXgofiB6bWlhbnktMSwgZGF0YSA9IGNib3BfbG9uZylcblhfb2JzIDwtIG1vZGVsLm1hdHJpeCh+IHptaWFueSwgZGF0YSA9IGNib3BfbG9uZylcblpfb2JzIDwtIG1vZGVsLm1hdHJpeCh+IG9jY3VwLTEsIGRhdGEgPSBjYm9wX2xvbmcpXG5kX29icyA8LSByZXAoMSwgbnJvdyhjYm9wX2xvbmcpKVxuIyMgbm9ub2JzXG5vY2N1cF9ub29icyA8LSB0b3RhbHNfb2NjdXAtdGFibGUoY2JvcF9sb25nJG9jY3VwKVxub2NjdXBfbm9vYnNfZGYgPC0gYXMuZGF0YS5mcmFtZShvY2N1cF9ub29icywgc3RyaW5nc0FzRmFjdG9ycyA9IEYpXG5ZX25vYnMgPC0gbWF0cml4KGRhdGEgPSBudW1lcmljKG5jb2woWV9vYnMpKSwgbmNvbCA9IG5jb2woWV9vYnMpLCBucm93ID0gc3VtKG9jY3VwX25vb2JzKSwgYnlyb3cgPSBUKVxuWF9ub2JzIDwtIG1hdHJpeChkYXRhID0gbnVtZXJpYyhuY29sKFlfb2JzKSksIG5jb2wgPSBuY29sKFlfb2JzKSwgbnJvdyA9IHN1bShvY2N1cF9ub29icyksIGJ5cm93ID0gVClcblpfbm9icyA8LSBtb2RlbC5tYXRyaXgofiBvY2N1cC0xLCBkYXRhID0gb2NjdXBfbm9vYnNfZGYpXG5aX25vYnMgPC0gWl9ub2JzW3JlcCh4ID0gMTpucm93KG9jY3VwX25vb2JzX2RmKSwgdGltZXMgPSBvY2N1cF9ub29ic19kZiRGcmVxKSxdXG5kX25vYnMgPC0gcmVwKDAsIHN1bShvY2N1cF9ub29ic19kZiRGcmVxKSlcblxuIyMgdG9nZXRoZXJcbllfYWxsIDwtIHJiaW5kKFlfb2JzLCBZX25vYnMpXG5YX2FsbCA8LSByYmluZChYX29icywgWF9ub2JzKVxuWl9hbGwgPC0gcmJpbmQoWl9vYnMsIFpfbm9icylcbmRfYWxsIDwtIGMoZF9vYnMsIGRfbm9icylcblxuXG4jIyMgQ2hhbmctS290dCAvIEtvdHQtQ2hhbmcgbW9kZWxcbnJlcyA8LSBubWFyX2NoYW5nX2tvdHQoWT1ZX2FsbCwgWCA9IFhfYWxsLCBaPVpfYWxsLCBkID0gZF9hbGwsIGNvbnRyb2wgPSBsaXN0KGVwcz0wLjAwMDAxLCBtYXhpdGVyID0gMjAwMCkpXG5cbmNib3BfbG9uZyRuZXdfd2VpZ2h0IDwtIDEvKHJlcyRyaG9bZF9hbGw9PTFdKVxuXG5jYm9wX3N2eV9ubWFyIDwtIHN2eWRlc2lnbihpZCA9fjEsIHdlaWdodHMgPSB+bmV3X3dlaWdodCwgIGRhdGEgPSBjYm9wX2xvbmcpXG5jYm9wX3N2eV9ubWFyX2NhbCA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnlfbm1hciwgZm9ybXVsYSA9IGxpc3QofiBvY2N1cCksIHBvcHVsYXRpb24gPSBsaXN0KHRvdGFsc19vY2N1cCkpXG5cbmNib3Bfc3Z5X21hciA8LSBzdnlkZXNpZ24oaWQgPX4xLCB3ZWlnaHRzID0gfjEsICBkYXRhID0gY2JvcF9sb25nKVxuY2JvcF9zdnlfbWFyX2NhbCA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnlfbWFyLCBmb3JtdWxhID0gbGlzdCh+IG9jY3VwKSwgcG9wdWxhdGlvbiA9IGxpc3QodG90YWxzX29jY3VwKSlcblxucHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnlfbm1hcl9jYWwpKVxuYGBgIn0= -->
 <pre class="r"><code>## observed data
 cbop_long &lt;- cbop[rep(1:nrow(cbop), times = cbop$liczba_miejsc_og),]
 cbop_long$occup &lt;- cbop_long$zawod1
@@ -1881,17 +1881,64 @@ occup_noobs &lt;- totals_occup-table(cbop_long$occup)
 occup_noobs_df &lt;- as.data.frame(occup_noobs, stringsAsFactors = F)
 Y_nobs &lt;- matrix(data = numeric(ncol(Y_obs)), ncol = ncol(Y_obs), nrow = sum(occup_noobs), byrow = T)
 X_nobs &lt;- matrix(data = numeric(ncol(Y_obs)), ncol = ncol(Y_obs), nrow = sum(occup_noobs), byrow = T)
-Z_nobs &lt;- model.matrix(~ nace-1, data = occup_noobs_df)
-</code></pre>
+Z_nobs &lt;- model.matrix(~ occup-1, data = occup_noobs_df)
+Z_nobs &lt;- Z_nobs[rep(x = 1:nrow(occup_noobs_df), times = occup_noobs_df$Freq),]
+d_nobs &lt;- rep(0, sum(occup_noobs_df$Freq))
+
+## together
+Y_all &lt;- rbind(Y_obs, Y_nobs)
+X_all &lt;- rbind(X_obs, X_nobs)
+Z_all &lt;- rbind(Z_obs, Z_nobs)
+d_all &lt;- c(d_obs, d_nobs)
+
+
+### Chang-Kott / Kott-Chang model
+res &lt;- nmar_chang_kott(Y=Y_all, X = X_all, Z=Z_all, d = d_all, control = list(eps=0.00001, maxiter = 2000))
+
+cbop_long$new_weight &lt;- 1/(res$rho[d_all==1])
+
+cbop_svy_nmar &lt;- svydesign(id =~1, weights = ~new_weight,  data = cbop_long)
+cbop_svy_nmar_cal &lt;- calibrate(design = cbop_svy_nmar, formula = list(~ occup), population = list(totals_occup))
+
+cbop_svy_mar &lt;- svydesign(id =~1, weights = ~1,  data = cbop_long)
+cbop_svy_mar_cal &lt;- calibrate(design = cbop_svy_mar, formula = list(~ occup), population = list(totals_occup))
+
+prop.table(svytable(~ zmiany, cbop_svy_nmar_cal))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gZXZhbChwcmVkdmFycywgZGF0YSwgZW52KSA6IG9iamVjdCAnbmFjZScgbm90IGZvdW5kXG4ifQ== -->
-<pre><code>Error in eval(predvars, data, env) : object &#39;nace&#39; not found</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gIDAuMDk3NzMyNzEgICAwLjA0NDYxOTg5ICAgMC43ODY4NDYwMSAgIDAuMDcwODAxMzkgXG4ifQ== -->
+<pre><code>zmiany
+ dwie zmiany         inne jedna zmiana  trzy zmiany 
+  0.09773271   0.04461989   0.78684601   0.07080139 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnlfbm1hcikpXG5gYGAifQ== -->
+<pre class="r"><code>prop.table(svytable(~ zmiany, cbop_svy_nmar))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gIDAuMTAwMTU1NDEgICAwLjA0MzcxOTE4ICAgMC43ODE3NjMwOSAgIDAuMDc0MzYyMzIgXG4ifQ== -->
+<pre><code>zmiany
+ dwie zmiany         inne jedna zmiana  trzy zmiany 
+  0.10015541   0.04371918   0.78176309   0.07436232 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnlfbWFyKSlcbmBgYCJ9 -->
+<pre class="r"><code>prop.table(svytable(~ zmiany, cbop_svy_mar))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gIDAuMjE5MjU4OTQgICAwLjA5NTcwOTQ2ICAgMC41MjIyMzg1NyAgIDAuMTYyNzkzMDMgXG4ifQ== -->
+<pre><code>zmiany
+ dwie zmiany         inne jedna zmiana  trzy zmiany 
+  0.21925894   0.09570946   0.52223857   0.16279303 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnlfbWFyX2NhbCkpXG5gYGAifQ== -->
+<pre class="r"><code>prop.table(svytable(~ zmiany, cbop_svy_mar_cal))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiem1pYW55XG4gZHdpZSB6bWlhbnkgICAgICAgICBpbm5lIGplZG5hIHptaWFuYSAgdHJ6eSB6bWlhbnkgXG4gIDAuMjA4Mjk4MjIgICAwLjA5MDM1OTU5ICAgMC41NTY5MzkzMyAgIDAuMTQ0NDAyODYgXG4ifQ== -->
+<pre><code>zmiany
+ dwie zmiany         inne jedna zmiana  trzy zmiany 
+  0.20829822   0.09035959   0.55693933   0.14440286 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkodGlkeXZlcnNlKQpsaWJyYXJ5KHN1cnZleSkKYGBgCgpgYGB7cn0Kc291cmNlKCIuLi9jb2Rlcy8xLW5tYXItY2hhbmcta290dC5SIikKYGBgCgpgYGB7cn0KY2JvcCA8LSByZWFkUkRTKGZpbGUgPSAiLi4vZGF0YS9kZi1jYm9wLTIwMThRMS5yZHMiKSAgJT4lIGZpbHRlcihwcnplel9wcmFjKQp0b3RhbHMgPC0gcmVhZFJEUyhmaWxlID0gIi4uL2RhdGEvZGYtZGVtYW5kLXRvdGFscy5yZHMiKQpjYm9wJHdlaWdodCA8LSBjYm9wJGxpY3piYV9taWVqc2Nfb2cqc3VtKHRvdGFscyRqdnMpIC8gc3VtKGNib3AkbGljemJhX21pZWpzY19vZykKc3VtKGNib3Akd2VpZ2h0KQpzdW0odG90YWxzJGp2cykKYGBgCgpDYWxpYnJhdGlvbgoKYGBge3J9CmNib3Akb2NjdXAgPC0gY2JvcCR6YXdvZDEKY2JvcF9zdnkgPC0gc3Z5ZGVzaWduKGlkID1+MSwgd2VpZ2h0cyA9IH53ZWlnaHQsIAogICAgICAgICAgICAgICAgICAgICAgZGF0YSA9IGNib3ApCgp0b3RhbHNfbmFjZSA8LSB4dGFicyhqdnMgfiBuYWNlLCB0b3RhbHMpCnRvdGFsc19vY2N1cCA8LSB4dGFicyhqdnMgfiBvY2N1cCwgdG90YWxzKQp0b3RhbHNfbmFjZV9vY2N1cCA8LSB4dGFicyhqdnMgfiBuYWNlICsgb2NjdXAsIHRvdGFscykKCmNib3Bfc3Z5X2NhbF9vY2N1cCA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnksIGZvcm11bGEgPSBsaXN0KH4gb2NjdXApLCBwb3B1bGF0aW9uID0gbGlzdCh0b3RhbHNfb2NjdXApKQpjYm9wX3N2eV9jYWxfbmFjZSA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnksIGZvcm11bGEgPSBsaXN0KH4gbmFjZSksIHBvcHVsYXRpb24gPSBsaXN0KHRvdGFsc19uYWNlKSkKY2JvcF9zdnlfY2FsX25hY2Vfb2NjdXAgPC0gY2FsaWJyYXRlKGRlc2lnbiA9IGNib3Bfc3Z5LCBmb3JtdWxhID0gbGlzdCh+IG5hY2UgKyBvY2N1cCksIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcG9wdWxhdGlvbiA9IGxpc3QodG90YWxzX25hY2Vfb2NjdXApKQoKcHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnkpKQpwcm9wLnRhYmxlKHN2eXRhYmxlKH4gem1pYW55LCBjYm9wX3N2eV9jYWxfb2NjdXApKQpwcm9wLnRhYmxlKHN2eXRhYmxlKH4gem1pYW55LCBjYm9wX3N2eV9jYWxfbmFjZSkpCnByb3AudGFibGUoc3Z5dGFibGUofiB6bWlhbnksIGNib3Bfc3Z5X2NhbF9uYWNlX29jY3VwKSkKCnByb3AudGFibGUoc3Z5dGFibGUofiBrb2Rfcm9kel96YXRydWQsIGNib3Bfc3Z5KSkKcHJvcC50YWJsZShzdnl0YWJsZSh+IGtvZF9yb2R6X3phdHJ1ZCwgY2JvcF9zdnlfY2FsX29jY3VwKSkKcHJvcC50YWJsZShzdnl0YWJsZSh+IGtvZF9yb2R6X3phdHJ1ZCwgY2JvcF9zdnlfY2FsX25hY2UpKQpwcm9wLnRhYmxlKHN2eXRhYmxlKH4ga29kX3JvZHpfemF0cnVkLCBjYm9wX3N2eV9jYWxfbmFjZV9vY2N1cCkpCmBgYAoKCk5NQVIKCmBgYHtyfQojIyBvYnNlcnZlZCBkYXRhCmNib3BfbG9uZyA8LSBjYm9wW3JlcCgxOm5yb3coY2JvcCksIHRpbWVzID0gY2JvcCRsaWN6YmFfbWllanNjX29nKSxdCmNib3BfbG9uZyRvY2N1cCA8LSBjYm9wX2xvbmckemF3b2QxCllfb2JzIDwtIG1vZGVsLm1hdHJpeCh+IHptaWFueS0xLCBkYXRhID0gY2JvcF9sb25nKQpYX29icyA8LSBtb2RlbC5tYXRyaXgofiB6bWlhbnksIGRhdGEgPSBjYm9wX2xvbmcpClpfb2JzIDwtIG1vZGVsLm1hdHJpeCh+IG9jY3VwLTEsIGRhdGEgPSBjYm9wX2xvbmcpCmRfb2JzIDwtIHJlcCgxLCBucm93KGNib3BfbG9uZykpCiMjIG5vbm9icwpvY2N1cF9ub29icyA8LSB0b3RhbHNfb2NjdXAtdGFibGUoY2JvcF9sb25nJG9jY3VwKQpvY2N1cF9ub29ic19kZiA8LSBhcy5kYXRhLmZyYW1lKG9jY3VwX25vb2JzLCBzdHJpbmdzQXNGYWN0b3JzID0gRikKWV9ub2JzIDwtIG1hdHJpeChkYXRhID0gbnVtZXJpYyhuY29sKFlfb2JzKSksIG5jb2wgPSBuY29sKFlfb2JzKSwgbnJvdyA9IHN1bShvY2N1cF9ub29icyksIGJ5cm93ID0gVCkKWF9ub2JzIDwtIG1hdHJpeChkYXRhID0gbnVtZXJpYyhuY29sKFlfb2JzKSksIG5jb2wgPSBuY29sKFlfb2JzKSwgbnJvdyA9IHN1bShvY2N1cF9ub29icyksIGJ5cm93ID0gVCkKWl9ub2JzIDwtIG1vZGVsLm1hdHJpeCh+IG9jY3VwLTEsIGRhdGEgPSBvY2N1cF9ub29ic19kZikKWl9ub2JzIDwtIFpfbm9ic1tyZXAoeCA9IDE6bnJvdyhvY2N1cF9ub29ic19kZiksIHRpbWVzID0gb2NjdXBfbm9vYnNfZGYkRnJlcSksXQpkX25vYnMgPC0gcmVwKDAsIHN1bShvY2N1cF9ub29ic19kZiRGcmVxKSkKCiMjIHRvZ2V0aGVyCllfYWxsIDwtIHJiaW5kKFlfb2JzLCBZX25vYnMpClhfYWxsIDwtIHJiaW5kKFhfb2JzLCBYX25vYnMpClpfYWxsIDwtIHJiaW5kKFpfb2JzLCBaX25vYnMpCmRfYWxsIDwtIGMoZF9vYnMsIGRfbm9icykKCgojIyMgQ2hhbmctS290dCAvIEtvdHQtQ2hhbmcgbW9kZWwKcmVzIDwtIG5tYXJfY2hhbmdfa290dChZPVlfYWxsLCBYID0gWF9hbGwsIFo9Wl9hbGwsIGQgPSBkX2FsbCwgY29udHJvbCA9IGxpc3QoZXBzPTAuMDAwMDEsIG1heGl0ZXIgPSAyMDAwKSkKCmNib3BfbG9uZyRuZXdfd2VpZ2h0IDwtIDEvKHJlcyRyaG9bZF9hbGw9PTFdKQoKY2JvcF9zdnlfbm1hciA8LSBzdnlkZXNpZ24oaWQgPX4xLCB3ZWlnaHRzID0gfm5ld193ZWlnaHQsICBkYXRhID0gY2JvcF9sb25nKQpjYm9wX3N2eV9ubWFyX2NhbCA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnlfbm1hciwgZm9ybXVsYSA9IGxpc3QofiBvY2N1cCksIHBvcHVsYXRpb24gPSBsaXN0KHRvdGFsc19vY2N1cCkpCgpjYm9wX3N2eV9tYXIgPC0gc3Z5ZGVzaWduKGlkID1+MSwgd2VpZ2h0cyA9IH4xLCAgZGF0YSA9IGNib3BfbG9uZykKY2JvcF9zdnlfbWFyX2NhbCA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnlfbWFyLCBmb3JtdWxhID0gbGlzdCh+IG9jY3VwKSwgcG9wdWxhdGlvbiA9IGxpc3QodG90YWxzX29jY3VwKSkKCnByb3AudGFibGUoc3Z5dGFibGUofiB6bWlhbnksIGNib3Bfc3Z5X25tYXJfY2FsKSkKcHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnlfbm1hcikpCnByb3AudGFibGUoc3Z5dGFibGUofiB6bWlhbnksIGNib3Bfc3Z5X21hcikpCnByb3AudGFibGUoc3Z5dGFibGUofiB6bWlhbnksIGNib3Bfc3Z5X21hcl9jYWwpKQoKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkodGlkeXZlcnNlKQpsaWJyYXJ5KHN1cnZleSkKYGBgCgpgYGB7cn0Kc291cmNlKCIuLi9jb2Rlcy8xLW5tYXItY2hhbmcta290dC5SIikKYGBgCgpgYGB7cn0KY2JvcCA8LSByZWFkUkRTKGZpbGUgPSAiLi4vZGF0YS9kZi1jYm9wLTIwMThRMS5yZHMiKQp0b3RhbHMgPC0gcmVhZFJEUyhmaWxlID0gIi4uL2RhdGEvZGYtZGVtYW5kLXRvdGFscy5yZHMiKQpjYm9wJHdlaWdodCA8LSBjYm9wJGxpY3piYV9taWVqc2Nfb2cqc3VtKHRvdGFscyRqdnMpIC8gc3VtKGNib3AkbGljemJhX21pZWpzY19vZykKc3VtKGNib3Akd2VpZ2h0KQpzdW0odG90YWxzJGp2cykKYGBgCgpDYWxpYnJhdGlvbgoKYGBge3J9CmNib3Akb2NjdXAgPC0gY2JvcCR6YXdvZDEKY2JvcF9zdnkgPC0gc3Z5ZGVzaWduKGlkID1+MSwgd2VpZ2h0cyA9IH53ZWlnaHQsIAogICAgICAgICAgICAgICAgICAgICAgZGF0YSA9IGNib3ApCgp0b3RhbHNfbmFjZSA8LSB4dGFicyhqdnMgfiBuYWNlLCB0b3RhbHMpCnRvdGFsc19vY2N1cCA8LSB4dGFicyhqdnMgfiBvY2N1cCwgdG90YWxzKQp0b3RhbHNfbmFjZV9vY2N1cCA8LSB4dGFicyhqdnMgfiBuYWNlICsgb2NjdXAsIHRvdGFscykKCmNib3Bfc3Z5X2NhbF9vY2N1cCA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnksIGZvcm11bGEgPSBsaXN0KH4gb2NjdXApLCBwb3B1bGF0aW9uID0gbGlzdCh0b3RhbHNfb2NjdXApKQpjYm9wX3N2eV9jYWxfbmFjZSA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnksIGZvcm11bGEgPSBsaXN0KH4gbmFjZSksIHBvcHVsYXRpb24gPSBsaXN0KHRvdGFsc19uYWNlKSkKY2JvcF9zdnlfY2FsX25hY2Vfb2NjdXAgPC0gY2FsaWJyYXRlKGRlc2lnbiA9IGNib3Bfc3Z5LCBmb3JtdWxhID0gbGlzdCh+IG5hY2UgKyBvY2N1cCksIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcG9wdWxhdGlvbiA9IGxpc3QodG90YWxzX25hY2Vfb2NjdXApKQoKcHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnkpKQpwcm9wLnRhYmxlKHN2eXRhYmxlKH4gem1pYW55LCBjYm9wX3N2eV9jYWxfb2NjdXApKQpwcm9wLnRhYmxlKHN2eXRhYmxlKH4gem1pYW55LCBjYm9wX3N2eV9jYWxfbmFjZSkpCnByb3AudGFibGUoc3Z5dGFibGUofiB6bWlhbnksIGNib3Bfc3Z5X2NhbF9uYWNlX29jY3VwKSkKCnByb3AudGFibGUoc3Z5dGFibGUofiBrb2Rfcm9kel96YXRydWQsIGNib3Bfc3Z5KSkKcHJvcC50YWJsZShzdnl0YWJsZSh+IGtvZF9yb2R6X3phdHJ1ZCwgY2JvcF9zdnlfY2FsX29jY3VwKSkKcHJvcC50YWJsZShzdnl0YWJsZSh+IGtvZF9yb2R6X3phdHJ1ZCwgY2JvcF9zdnlfY2FsX25hY2UpKQpwcm9wLnRhYmxlKHN2eXRhYmxlKH4ga29kX3JvZHpfemF0cnVkLCBjYm9wX3N2eV9jYWxfbmFjZV9vY2N1cCkpCmBgYAoKCk5NQVIKCmBgYHtyfQojIyBvYnNlcnZlZCBkYXRhCmNib3BfbG9uZyA8LSBjYm9wW3JlcCgxOm5yb3coY2JvcCksIHRpbWVzID0gY2JvcCRsaWN6YmFfbWllanNjX29nKSxdCmNib3BfbG9uZyRvY2N1cCA8LSBjYm9wX2xvbmckemF3b2QxCllfb2JzIDwtIG1vZGVsLm1hdHJpeCh+IHptaWFueS0xLCBkYXRhID0gY2JvcF9sb25nKQpYX29icyA8LSBtb2RlbC5tYXRyaXgofiB6bWlhbnksIGRhdGEgPSBjYm9wX2xvbmcpClpfb2JzIDwtIG1vZGVsLm1hdHJpeCh+IG9jY3VwLTEsIGRhdGEgPSBjYm9wX2xvbmcpCmRfb2JzIDwtIHJlcCgxLCBucm93KGNib3BfbG9uZykpCiMjIG5vbm9icwpvY2N1cF9ub29icyA8LSB0b3RhbHNfb2NjdXAtdGFibGUoY2JvcF9sb25nJG9jY3VwKQpvY2N1cF9ub29ic19kZiA8LSBhcy5kYXRhLmZyYW1lKG9jY3VwX25vb2JzLCBzdHJpbmdzQXNGYWN0b3JzID0gRikKWV9ub2JzIDwtIG1hdHJpeChkYXRhID0gbnVtZXJpYyhuY29sKFlfb2JzKSksIG5jb2wgPSBuY29sKFlfb2JzKSwgbnJvdyA9IHN1bShvY2N1cF9ub29icyksIGJ5cm93ID0gVCkKWF9ub2JzIDwtIG1hdHJpeChkYXRhID0gbnVtZXJpYyhuY29sKFlfb2JzKSksIG5jb2wgPSBuY29sKFlfb2JzKSwgbnJvdyA9IHN1bShvY2N1cF9ub29icyksIGJ5cm93ID0gVCkKWl9ub2JzIDwtIG1vZGVsLm1hdHJpeCh+IG9jY3VwLTEsIGRhdGEgPSBvY2N1cF9ub29ic19kZikKWl9ub2JzIDwtIFpfbm9ic1tyZXAoeCA9IDE6bnJvdyhvY2N1cF9ub29ic19kZiksIHRpbWVzID0gb2NjdXBfbm9vYnNfZGYkRnJlcSksXQpkX25vYnMgPC0gcmVwKDAsIHN1bShvY2N1cF9ub29ic19kZiRGcmVxKSkKCiMjIHRvZ2V0aGVyCllfYWxsIDwtIHJiaW5kKFlfb2JzLCBZX25vYnMpClhfYWxsIDwtIHJiaW5kKFhfb2JzLCBYX25vYnMpClpfYWxsIDwtIHJiaW5kKFpfb2JzLCBaX25vYnMpCmRfYWxsIDwtIGMoZF9vYnMsIGRfbm9icykKCgojIyMgQ2hhbmctS290dCAvIEtvdHQtQ2hhbmcgbW9kZWwKcmVzIDwtIG5tYXJfY2hhbmdfa290dChZPVlfYWxsLCBYID0gWF9hbGwsIFo9Wl9hbGwsIGQgPSBkX2FsbCwgY29udHJvbCA9IGxpc3QoZXBzPTAuMDAwMDEsIG1heGl0ZXIgPSAyMDAwKSkKCmNib3BfbG9uZyRuZXdfd2VpZ2h0IDwtIDEvKHJlcyRyaG9bZF9hbGw9PTFdKQoKY2JvcF9zdnlfbm1hciA8LSBzdnlkZXNpZ24oaWQgPX4xLCB3ZWlnaHRzID0gfm5ld193ZWlnaHQsICBkYXRhID0gY2JvcF9sb25nKQpjYm9wX3N2eV9ubWFyX2NhbCA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnlfbm1hciwgZm9ybXVsYSA9IGxpc3QofiBvY2N1cCksIHBvcHVsYXRpb24gPSBsaXN0KHRvdGFsc19vY2N1cCkpCgpjYm9wX3N2eV9tYXIgPC0gc3Z5ZGVzaWduKGlkID1+MSwgd2VpZ2h0cyA9IH4xLCAgZGF0YSA9IGNib3BfbG9uZykKY2JvcF9zdnlfbWFyX2NhbCA8LSBjYWxpYnJhdGUoZGVzaWduID0gY2JvcF9zdnlfbWFyLCBmb3JtdWxhID0gbGlzdCh+IG9jY3VwKSwgcG9wdWxhdGlvbiA9IGxpc3QodG90YWxzX29jY3VwKSkKCnByb3AudGFibGUoc3Z5dGFibGUofiB6bWlhbnksIGNib3Bfc3Z5X25tYXJfY2FsKSkKcHJvcC50YWJsZShzdnl0YWJsZSh+IHptaWFueSwgY2JvcF9zdnlfbm1hcikpCnByb3AudGFibGUoc3Z5dGFibGUofiB6bWlhbnksIGNib3Bfc3Z5X21hcikpCnByb3AudGFibGUoc3Z5dGFibGUofiB6bWlhbnksIGNib3Bfc3Z5X21hcl9jYWwpKQoKYGBgCgo=</div>
 
 
 
