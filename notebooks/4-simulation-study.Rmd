@@ -6,6 +6,8 @@ output: html_notebook
 ```{r}
 library(gmm)
 library(matrixStats)
+library(survey)
+source("../codes/1-nmar-chang-kott.R")
 ```
 
 # Simulation study -- non-parametric 
@@ -16,8 +18,6 @@ nonpar_df$y <- as.factor(nonpar_df$y)
 nonpar_df$x1 <- as.factor(nonpar_df$x1)
 nonpar_df$x2 <- as.factor(nonpar_df$x2)
 ## eta <- 1 +  1(df$y == 2)
-set.seed(123)
-
 
 sim_res_np <- list()
 sim_phi_np <- list()
@@ -25,10 +25,10 @@ sim_naive_np<- list()
 sim_cal_np <- list()
 sim_nmar_cal_np <- list()
 
-for (i in 1:100) {
+for (i in 1:10) {
   cat(i, "\n")
   set.seed(i)
-  flag <- rbinom(n = NROW(nonpar_df), size = 1, prob = nonpar_df$probs_mar) 
+  flag <- rbinom(n = NROW(nonpar_df), size = 1, prob = nonpar_df$probs_nmar) 
   nonpar_df$d <- flag
   #totals <- colSums(model.matrix(~ -1 + zawod1, data = cbop_sim))
   #cbop_sim_d <- subset(cbop_sim, d == 1)
@@ -52,7 +52,7 @@ for (i in 1:100) {
   
   ## calibrarion 
   Xs <- xtabs(~ x1+x2, data = nonpar_df)
-  y_des <- svydesign(ids =~ 1, data = subset(nonpar_df, d == 1))
+  y_des <- svydesign(ids =~ 1, weight = ~1, data = subset(nonpar_df, d == 1))
   y_des_cal <- calibrate(y_des, formula = list(~  x1+x2), population = list(Xs))
   sim_cal_np[[i]] <- prop.table(svytable(~y, y_des_cal))
   

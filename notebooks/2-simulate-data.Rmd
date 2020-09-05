@@ -26,7 +26,8 @@ df$y <- ifelse(df$x == 22, sample(x = c(1,2,3), size = rep_x[4], prob = c(0.2, 0
 prop.table(table(df$y))
 
 ## nmar (x1 and y)
-eta <- 1 +  (df$y == 2)
+#eta <- (df$y == 2)
+eta <- -0.8*(df$y == 2) - 0.4*(df$x1 == 2)
 rho <- exp(eta) / (1 + exp(eta))
 df$probs_nmar <- rho
 

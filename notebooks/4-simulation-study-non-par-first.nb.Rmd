@@ -1,0 +1,114 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(data.table)
+source("codes/1-nmar-chang-kott.R")
+```
+
+Sim data according to Riddles et al.
+
+```{r}
+## population data
+rep_x <- as.integer(200*c(50, 100, 150, 200))
+df <- data.frame(x = rep(c(11,12, 21, 22), rep_x))
+df$x1 <- ifelse(substr(df$x,1,1) == 1,  1, 2)
+df$x2 <- ifelse(substr(df$x,2,2) == 1,  1, 2)
+df$y <- NA
+df$y <- ifelse(df$x == 11, sample(x = c(1,2), size = rep_x[1], prob = c(0.7 ,0.3), replace = T), df$y)
+df$y <- ifelse(df$x == 12, sample(x = c(1,2), size = rep_x[2], prob = c(0.5, 0.5), replace = T), df$y)
+df$y <- ifelse(df$x == 21, sample(x = c(1,2), size = rep_x[3], prob = c(0.3, 0.7), replace = T), df$y)
+df$y <- ifelse(df$x == 22, sample(x = c(1,2), size = rep_x[4], prob = c(0.4, 0.6), replace = T), df$y)
+
+## just checking
+prop.table(ftable(xtabs( ~ x1  + x2 + y, data = df)), margin = 1)
+## sampling (n=200)
+
+res_nmar_npar <- list()
+res_nmar_kott <- list()
+maxiter <- 1e5
+
+for (j in 1:100) {
+  cat("bootstrap:", j, "\n")
+  set.seed(j)
+  
+  #df_sampl <- df %>%
+  #  group_by(x1, x2) %>%
+  #  sample_n(size = 200) %>%
+  #  ungroup() 
+  
+  df_sampl <- df %>%
+    mutate(
+      # d = case_when(x == "11" ~ 50,
+      #               x == "12" ~ 100,
+      #               x == "21" ~ 150,
+      #               x == "22" ~ 200),
+      y = as.factor(y),
+      x1 = as.factor(x1),
+      x2 = as.factor(x2),
+      #eta = -0.4 * (x1 == 2) - 0.8 * (y == 2),
+      eta = - 0.8 * (y == 2),
+      rho = 1/(1+exp(eta)),
+      #rho  = exp(eta) / (1  + exp(eta)),
+      resp = rbinom(n = nrow(df), size = 1, prob = rho)
+    ) 
+  
+    #%>%
+    #dplyr::count(resp, x1, x2, y, wt = d) %>%
+    #dplyr::count(resp, x1, x2, y) %>%
+    #ungroup()
+  
+  ### chang-kott
+  Y <- model.matrix(~ y-1, data = df_sampl)
+  X <- model.matrix(~ y, data = df_sampl)
+  Z <- model.matrix(~ x1+x2, data = df_sampl)
+  d <- df_sampl$resp
+  res_chang_kott <- nmar_chang_kott(Y=Y, X = X, Z=Z, d = d, control = list(eps=0.00001, maxiter = 2000))
+  res_nmar_kott[[j]] <- res_chang_kott$y_hat
+  
+  ### NON-PAR EM 
+  df_sampl <- df_sampl %>% dplyr::count(resp, x1, x2, y) %>% ungroup()
+  
+  ## observed sample
+  df_sampl_obs <- df_sampl %>%  filter(resp == 1) %>% group_by(x1, x2) %>% mutate(p_hat = n / sum(n)) %>% ungroup()
+  
+  ## non-respondents
+  df_sampl_nonresp <- df_sampl %>% filter(resp == 0) %>% dplyr::count(x1, x2, wt = n, name = "m")
+  
+  df_sampl_obs <- df_sampl_obs %>% left_join(df_sampl_nonresp) %>% mutate(O = 1)
+  O_start <- df_sampl_obs$O
+  res <- data.table(df_sampl_obs)
+  
+  for (i in 1:maxiter) {
+    
+    #res[, m_hat := m * (p_hat * O) / sum(p_hat * O), .(x1, x2)][, O :=  sum(m_hat)/ sum(n), .(y, x1)]
+    res[, m_hat := m * (p_hat * O) / sum(p_hat * O), .(x1, x2)][, O :=  sum(m_hat)/ sum(n), .(y)]
+ 
+    dif <- sum((O_start - res$O) ^ 2)
+
+    if (dif < sqrt(.Machine$double.eps)) {
+      cat("Iter:", i, '\n')
+      break
+    }
+    O_start <- res$O
+    res <- copy(res)
+  }
+
+  res_nmar_npar[[j]] <- res %>%  mutate(p_i = (1+O)^-1) %>% dplyr::count(y, wt = n/p_i) %>% mutate( p = n/sum(n)) %>% pull(p) 
+}
+
+npar_bias <- (do.call('rbind', res_nmar_npar) %>% colMeans()) - prop.table(table(df$y))
+kott_bias <- (do.call('rbind', res_nmar_kott) %>% colMeans()) - prop.table(table(df$y))
+
+npar_var <- (do.call('rbind', res_nmar_npar) %>% colVars())
+kott_var <- (do.call('rbind', res_nmar_kott) %>% colVars())
+
+npar_bias^2 + npar_var
+kott_bias^2 + kott_var
+```
+
+
+
