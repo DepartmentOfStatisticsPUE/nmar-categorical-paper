@@ -1,11 +1,12 @@
+
 ## riddles et al nmar
 
 using Distributions
 using Random
-using DataFrames
 using StatsBase
 using Statistics
 using FreqTables
+using DataFrames
 using DataFramesMeta
 
 ## population data
@@ -38,7 +39,6 @@ for b in 1:B
     df_sampl_obs = df_sampl[df_sampl.resp .== 1, :]
     df_sampl_obs = @transform(groupby(df_sampl_obs, [:x1, :x2]), p_hat = :n/sum(:n))
     
-    df_sampl_obs.p_hat = by(df_sampl_obs, [:x1, :x2], p_hat = :n => (x -> x/sum(x))).p_hat
     df_sampl_nonobs = by(df_sampl[df_sampl.resp .== 0,:], [:x1, :x2], m = :n => sum)
     
     df_sampl_obs = leftjoin(df_sampl_obs, df_sampl_nonobs, on = [:x1, :x2])
@@ -46,15 +46,14 @@ for b in 1:B
     
     O_start = df_sampl_obs.O
     
-    ## interations
-    
+    ## EM 
     for iter in 1:10000
         df_sampl_obs = @transform(groupby(df_sampl_obs, [:x1, :x2]), m_hat = :m .* :p_hat .* :O / sum(:p_hat .* :O))
         df_sampl_obs = @transform(groupby(df_sampl_obs, [:y, :x1]), O = sum(:m_hat) / sum(:n))
         dif = sum((O_start - df_sampl_obs.O).^2)
         
         if (dif < sqrt(eps()))
-            println("Converged on interation: ", iter)
+            println("Converged on interation: ", iter, " with diff equal to ", dif)
             break
         end
         O_start = df_sampl_obs.O
@@ -67,4 +66,4 @@ end
 
 npar_bias = mean(sim_res, dims = 1) - prop(convert(Array, freqtable(df.y))')
 npar_var = var(sim_res, dims = 1)
-npar_mse = npar_bias.^2 + npar_var
+npar_mse = (npar_bias.^2 + npar_var)
