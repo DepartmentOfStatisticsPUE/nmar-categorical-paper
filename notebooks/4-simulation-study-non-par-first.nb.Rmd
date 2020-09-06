@@ -106,8 +106,7 @@ kott_bias <- (do.call('rbind', res_nmar_kott) %>% colMeans()) - prop.table(table
 npar_var <- (do.call('rbind', res_nmar_npar) %>% colVars())
 kott_var <- (do.call('rbind', res_nmar_kott) %>% colVars())
 
-npar_bias^2 + npar_var
-kott_bias^2 + kott_var
+(npar_bias^2 + npar_var) /  (kott_bias^2 + kott_var)
 ```
 
 
